@@ -5,6 +5,8 @@
         Queued,
         Paused,
         Downloading,
+        Waiting,
+        Concatenation,
         Canceled,
         Error,
         Done
