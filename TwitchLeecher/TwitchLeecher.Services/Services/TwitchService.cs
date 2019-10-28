@@ -725,6 +725,7 @@ namespace TwitchLeecher.Services.Services
 
                         TimeSpan cropStartTime = downloadParams.CropStartTime;
                         TimeSpan cropEndTime = downloadParams.CropEndTime;
+                        TimeSpan totalTime = downloadParams.CropEndTime;
 
                         TwitchVideoQuality quality = downloadParams.Quality;
 
@@ -753,6 +754,13 @@ namespace TwitchLeecher.Services.Services
                             cancellationToken.ThrowIfCancellationRequested();
 
                             VodPlaylist vodPlaylist = RetrieveVodPlaylist(log, tempDir, playlistUrl);
+
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            totalTime = CalcTotalTime(vodPlaylist);
+                            if (!cropEnd)//Update total video time of downloads tab
+                                downloadParams.CropEndTime = totalTime;
+                            downloadParams.Video.Length = totalTime;
 
                             cancellationToken.ThrowIfCancellationRequested();
 
@@ -902,7 +910,18 @@ namespace TwitchLeecher.Services.Services
             }
         }
 
-        private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, string playlistUrl)
+        private TimeSpan CalcTotalTime(VodPlaylist vodPlaylist)
+        {
+            double lengthSum = 0;
+            foreach (VodPlaylistPart part in vodPlaylist)
+            {
+                double partLength = part.Length;
+                lengthSum += partLength;
+            }
+            return new TimeSpan(0, 0, (int) lengthSum);
+        }
+
+private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, string playlistUrl)
         {
             using (WebClient webClient = new WebClient())
             {
