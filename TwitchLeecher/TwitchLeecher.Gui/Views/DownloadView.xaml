@@ -3,7 +3,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ctrl="clr-namespace:TwitchLeecher.Gui.Controls"
-        xmlns:converters="clr-namespace:TwitchLeecher.Gui.Converters">
+        xmlns:services="clr-namespace:TwitchLeecher.Services.Services;assembly=TwitchLeecher.Services"
+        xmlns:converters="clr-namespace:TwitchLeecher.Gui.Converters"
+        xmlns:fa="http://schemas.fontawesome.io/icons/">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -141,6 +143,18 @@
                     <ctrl:TlIntegerUpDown Grid.Row="2" Grid.Column="6" Style="{StaticResource TlTimeUpDown}" Value="{Binding CropEndMinutes, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DownloadParams.CropEnd}" />
                     <TextBlock Grid.Row="2" Grid.Column="8"  Text=":" VerticalAlignment="Center" />
                     <ctrl:TlIntegerUpDown Grid.Row="2" Grid.Column="10" Style="{StaticResource TlTimeUpDown}" Value="{Binding CropEndSeconds, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DownloadParams.CropEnd}" />
+                    <CheckBox Grid.Row="2" Grid.Column="12" Grid.ColumnSpan="3" IsChecked="{Binding DownloadParams.StreamingNow}" Content="Online" VerticalAlignment="Center" />
+                    <fa:ImageAwesome Grid.Row="2" Grid.Column="14" Style="{StaticResource Img_Help}">
+                        <fa:ImageAwesome.ToolTip>
+                            <ToolTip Width="350">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download live stream" />
+                                    <TextBlock TextAlignment="Justify" Text="{Binding Path=(services:TwitchService.TIMER_STREAMINGNOW_INTERVAL_MIN),
+                                    StringFormat='Download living stream until it end. Check new parts every {0} minutes, also able to auto split video. Incompatible with end crop'}"/>
+                                </StackPanel>
+                            </ToolTip>
+                        </fa:ImageAwesome.ToolTip>
+                    </fa:ImageAwesome>
 
                     <CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding AutoSplitUseExtended}" Content="Auto" VerticalAlignment="Center" />
                     <ctrl:TlIntegerUpDown Grid.Row="4" Grid.Column="2" Style="{StaticResource TlTimeUpDown}" Value="{Binding AutoSplitTimeHours, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DownloadParams.AutoSplit}" Maximum="99" Loop="False" />
