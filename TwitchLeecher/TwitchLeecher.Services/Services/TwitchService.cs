@@ -698,7 +698,11 @@ namespace TwitchLeecher.Services.Services
             {
                 try
                 {
-                    if (!_downloads.Where(d => d.DownloadState == DownloadState.Downloading).Any())
+                    if (_downloads.Where(d => d.DownloadState == DownloadState.Downloading).Any())
+                        return;
+                    if (!_preferencesService.CurrentPreferences.DownloadAndConcatSimultaneously
+                        && _downloads.Where(d => d.DownloadState == DownloadState.Waiting || d.DownloadState == DownloadState.Concatenation).Any())
+                        return;
                     {
                         TwitchVideoDownload download = _downloads.Where(d => d.DownloadState == DownloadState.Queued).FirstOrDefault();
 
@@ -773,6 +777,15 @@ namespace TwitchLeecher.Services.Services
                             cancellationToken.ThrowIfCancellationRequested();
 
                             _processingService.ConcatParts(log, setStatus, setProgress, vodPlaylist, disableConversion ? outputFile : concatFile);
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            setDownloadState(DownloadState.Waiting);
+
+                            WaitUntilAnyConcatination(log, setStatus, setDownloadState, download, cancellationToken);
+
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            setDownloadState(DownloadState.Concatenation);
 
                             if (!disableConversion)
                             {
@@ -824,7 +837,7 @@ namespace TwitchLeecher.Services.Services
                             }
                         });
 
-                        if (_downloadTasks.TryAdd(downloadId, new DownloadTask(downloadVideoTask, continueTask, cancellationTokenSource)))
+                        if (_downloadTasks.TryAdd(downloadId, new DownloadTask(cancellationTokenSource, downloadVideoTask, continueTask)))
                         {
                             downloadVideoTask.Start();
                             setDownloadState(DownloadState.Downloading);
@@ -1084,6 +1097,28 @@ private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, stri
             log(Environment.NewLine + Environment.NewLine + "Download of all video chunks complete!");
         }
 
+        private void WaitUntilAnyConcatination(Action<string> log, Action<string> setStatus, Action<DownloadState> setDownloadState, TwitchVideoDownload thisDwonload, CancellationToken cancellationToken)
+        {
+            setStatus("Wait other concatinations");
+            log("Check that no one is concatenating");
+            while (true)
+            {//Pause if there are any other is contatenating
+                cancellationToken.ThrowIfCancellationRequested();
+                lock (_changeDownloadLockObject)
+                {
+                    bool isBusy = _downloads.Where(d => d.DownloadState == DownloadState.Concatenation).Any()
+                    || _downloads.TakeWhile(d => !d.Equals(thisDwonload)).Where(d => d.DownloadState == DownloadState.Waiting).Any();
+                    if (!isBusy)
+                    {
+                        setDownloadState(DownloadState.Concatenation);
+                        log("Now no video is concatenating");
+                        break;
+                    }
+                }
+                Thread.Sleep(TIMER_INTERVALL * 1000);
+            }
+        }
+
         private void CleanUp(string directory, Action<string> log)
         {
             try
@@ -1316,7 +1351,7 @@ private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, stri
 
             try
             {
-                return !_downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Queued).Any();
+                return !_downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Waiting || d.DownloadState == DownloadState.Concatenation || d.DownloadState == DownloadState.Queued).Any();
             }
             finally
             {
@@ -1333,12 +1368,11 @@ private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, stri
                 downloadTask.CancellationTokenSource.Cancel();
             }
 
-            List<Task> tasks = _downloadTasks.Values.Select(v => v.Task).ToList();
-            tasks.AddRange(_downloadTasks.Values.Select(v => v.ContinueTask).ToList());
+            Task[] tasks = _downloadTasks.Values.SelectMany(v => v.Tasks).Where(x => x != null).ToArray();
 
             try
             {
-                Task.WaitAll(tasks.ToArray());
+                Task.WaitAll(tasks);
             }
             catch (Exception)
             {
@@ -1355,7 +1389,7 @@ private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, stri
 
         public bool IsFileNameUsed(string fullPath)
         {
-            IEnumerable<TwitchVideoDownload> downloads = _downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Queued);
+            IEnumerable<TwitchVideoDownload> downloads = _downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Concatenation || d.DownloadState == DownloadState.Waiting || d.DownloadState == DownloadState.Queued);
 
             foreach (TwitchVideoDownload download in downloads)
             {
