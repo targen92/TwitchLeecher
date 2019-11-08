@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define BUNDLE_UPGRADE_CODE="BDF423D4-16FC-49D0-8037-D096E5FEBFEF"?>
+  <?define BUNDLE_UPGRADE_CODE="9D98B671-954A-4F59-8093-3567E0A10E87"?>
 
   <?define BUNDLE_TL_EXE="$(var.SolutionDir)..\TwitchLeecher\TwitchLeecher\bin\TwitchLeecher.exe"?>
 

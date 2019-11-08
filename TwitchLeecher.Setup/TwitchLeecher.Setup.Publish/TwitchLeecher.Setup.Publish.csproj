@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{325557CD-D8D2-46C5-A02A-4057EA96422E}</ProjectGuid>
+    <ProjectGuid>{4CB62C03-19B9-42C6-B09E-C560550DCFA3}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TwitchLeecher.Setup.Publish</RootNamespace>

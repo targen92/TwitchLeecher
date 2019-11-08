@@ -53,7 +53,7 @@
             </Grid.RowDefinitions>
             <TextBlock Text="{Binding ProductNameVersionDisplay,
                               StringFormat='Please choose where to install \{0\}. In order to choose a different folder\, click the \&quot;Browse\&quot; button.',
-                              FallbackValue='Please choose where to install Twitch Leecher X.Y. In order to choose a different folder\, click the \&quot;Browse\&quot; button.'}" />
+                              FallbackValue='Please choose where to install TG Twitch Leecher X.Y. In order to choose a different folder\, click the \&quot;Browse\&quot; button.'}" />
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition />

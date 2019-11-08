@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{33D2C480-6075-4354-8106-C9414181E7CA}</ProjectGuid>
+    <ProjectGuid>{2C230C81-2CB5-4612-BC07-6CAD59262A52}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TwitchLeecher</RootNamespace>
@@ -81,15 +81,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TwitchLeecher.Services\TwitchLeecher.Services.csproj">
-      <Project>{d99faad3-7131-4f91-9d92-0d434a9f4385}</Project>
+      <Project>{07130B0F-5594-46E2-9506-F9F2F03A3EBD}</Project>
       <Name>TwitchLeecher.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\TwitchLeecher.Shared\TwitchLeecher.Shared.csproj">
-      <Project>{37aac23f-da34-4158-b32f-ca4a59ad71a9}</Project>
+      <Project>{EAA5E544-BA90-4948-9A20-BAF0ADE5C976}</Project>
       <Name>TwitchLeecher.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\TwitchLeecher.GUI\TwitchLeecher.Gui.csproj">
-      <Project>{cc5119f2-b6e6-4c41-8090-da3cd5fbcdf5}</Project>
+      <Project>{F54EF8D4-2E82-47DD-AF0E-D3C296FF8178}</Project>
       <Name>TwitchLeecher.Gui</Name>
     </ProjectReference>
   </ItemGroup>

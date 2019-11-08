@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>3.10</ProductVersion>
-    <ProjectGuid>bb665161-30f6-495b-b3b5-97e2ea27f11e</ProjectGuid>
+    <ProjectGuid>29BEB452-529E-4F44-9984-3BA8F259922A</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>TL</OutputName>
     <OutputType>Package</OutputType>
@@ -47,7 +47,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TwitchLeecher.Setup.Custom\TwitchLeecher.Setup.Custom.csproj">
       <Name>TwitchLeecher.Setup.Custom</Name>
-      <Project>{cca9e841-1492-4d02-8dfc-72fff0812ee2}</Project>
+      <Project>{46262052-F267-46A2-AE65-66F04DF8968B}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

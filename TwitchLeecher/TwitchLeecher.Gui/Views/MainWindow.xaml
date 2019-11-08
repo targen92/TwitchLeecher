@@ -101,7 +101,7 @@
                 <Image Grid.Column="0" Source="/TwitchLeecher.Gui;component/Resources/TL_Icon.png" Height="40" Margin="10" />
 
                 <StackPanel Grid.Column="1" Margin="0,6,0,0">
-                    <TextBlock Style="{StaticResource TlTitleText}" Text="{Binding Title, FallbackValue='Twitch Leecher X.Y'}" />
+                    <TextBlock Style="{StaticResource TlTitleText}" Text="{Binding Title, FallbackValue='TG Twitch Leecher X.Y'}" />
                     <TextBlock Style="{StaticResource SubTitleText}" Text="The Broadcast Downloader" Margin="10,0,0,0" />
                 </StackPanel>
 

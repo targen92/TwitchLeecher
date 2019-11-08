@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{37AAC23F-DA34-4158-B32F-CA4A59AD71A9}</ProjectGuid>
+    <ProjectGuid>{EAA5E544-BA90-4948-9A20-BAF0ADE5C976}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TwitchLeecher.Shared</RootNamespace>

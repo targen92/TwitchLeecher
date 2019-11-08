@@ -543,7 +543,7 @@ namespace TwitchLeecher.Setup.Gui
         /// MSI returns a list by alternating process id and program name whilst padding empty entries to 2^x.
         ///
         /// [0] - 9876
-        /// [1] - Twitch Leecher
+        /// [1] - TG Twitch Leecher
         /// [2] - 6789
         /// [3] - dotPeek
         /// [4] -
@@ -555,7 +555,7 @@ namespace TwitchLeecher.Setup.Gui
         ///
         /// MSI returns a list by alternating program name and process id without padding the list.
         ///
-        /// [0] - Twitch Leecher
+        /// [0] - TG Twitch Leecher
         /// [1] - 9876
         /// [2] - dotPeek
         /// [3] - 6789
@@ -564,8 +564,8 @@ namespace TwitchLeecher.Setup.Gui
         ///
         /// MSI returns a list by alternating program name and program name with process id without padding the list.
         ///
-        /// [0] - Twitch Leecher
-        /// [1] - Twitch Leecher (Process Id: 9876)
+        /// [0] - TG Twitch Leecher
+        /// [1] - TG Twitch Leecher (Process Id: 9876)
         /// [2] - dotPeek
         /// [3] - dotPeek (Process Id: 6789)
         /// </summary>

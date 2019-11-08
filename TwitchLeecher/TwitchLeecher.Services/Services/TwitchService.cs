@@ -832,7 +832,7 @@ namespace TwitchLeecher.Services.Services
 
         private void WriteDownloadInfo(Action<string> log, DownloadParameters downloadParams, string ffmpegFile, string tempDir)
         {
-            log(Environment.NewLine + Environment.NewLine + "TWITCH LEECHER INFO");
+            log(Environment.NewLine + Environment.NewLine + "TG TWITCH LEECHER INFO");
             log(Environment.NewLine + "--------------------------------------------------------------------------------------------");
             log(Environment.NewLine + "Version: " + AssemblyUtil.Get.GetAssemblyVersion().Trim());
 
@@ -843,7 +843,7 @@ namespace TwitchLeecher.Services.Services
             log(Environment.NewLine + "Download Url: " + downloadParams.Video.Url);
             log(Environment.NewLine + "Crop Start: " + (downloadParams.CropStart ? "Yes (" + downloadParams.CropStartTime.ToDaylessString() + ")" : "No"));
             log(Environment.NewLine + "Crop End: " + (downloadParams.CropEnd ? "Yes (" + downloadParams.CropEndTime.ToDaylessString() + ")" : "No"));
-
+            
             log(Environment.NewLine + Environment.NewLine + "OUTPUT INFO");
             log(Environment.NewLine + "--------------------------------------------------------------------------------------------");
             log(Environment.NewLine + "Disable Conversion: " + (downloadParams.DisableConversion ? "Yes" : "No"));

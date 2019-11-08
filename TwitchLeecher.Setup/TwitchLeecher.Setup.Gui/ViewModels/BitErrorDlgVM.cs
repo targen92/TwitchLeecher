@@ -49,7 +49,7 @@ namespace TwitchLeecher.Setup.Gui.ViewModels
         {
             get
             {
-                return "Twitch Leecher requires a 64 bit operating system!";
+                return "TG Twitch Leecher requires a 64 bit operating system!";
             }
         }
 

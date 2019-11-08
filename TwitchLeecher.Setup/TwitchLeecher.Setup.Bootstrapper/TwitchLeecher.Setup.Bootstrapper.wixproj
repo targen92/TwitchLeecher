@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>3.10</ProductVersion>
-    <ProjectGuid>d8e8902c-ab53-45ce-8458-5964262eec8d</ProjectGuid>
+    <ProjectGuid>51C4E539-0862-4AF7-9C39-0C2F92FAD037</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>TwitchLeecher</OutputName>
     <OutputType>Bundle</OutputType>
@@ -46,7 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TwitchLeecher.Setup.Gui\TwitchLeecher.Setup.Gui.csproj">
       <Name>TwitchLeecher.Setup.Gui</Name>
-      <Project>{be8bcec6-5a0e-41ba-ad02-b48df3b4ab29}</Project>
+      <Project>{F06D3F41-795A-4A4E-83E1-17858F9524AC}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
@@ -54,7 +54,7 @@
     </ProjectReference>
     <ProjectReference Include="..\TwitchLeecher.Setup.Msi\TwitchLeecher.Setup.Msi.wixproj">
       <Name>TwitchLeecher.Setup.Msi</Name>
-      <Project>{bb665161-30f6-495b-b3b5-97e2ea27f11e}</Project>
+      <Project>{29BEB452-529E-4F44-9984-3BA8F259922A}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

@@ -65,7 +65,7 @@
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Check for Updates" />
                                 <TextBlock TextAlignment="Justify">
                                         You will automatically be informed if a new version
-                                        of Twitch Leecher is available for download.
+                                        of TG Twitch Leecher is available for download.
                                 </TextBlock>
                             </StackPanel>
                         </ToolTip>
@@ -199,7 +199,7 @@
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Search on Start" />
                                 <TextBlock TextAlignment="Justify">
-                                        If enabled, Twitch Leecher performs a search with the above settings on application startup.
+                                        If enabled, TG Twitch Leecher performs a search with the above settings on application startup.
                                 </TextBlock>
                             </StackPanel>
                         </ToolTip>
@@ -463,7 +463,7 @@
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Disable conversion to mp4" />
                                 <TextBlock TextAlignment="Justify">
-                                    Depending on the video containing muted parts, frame drops or the encoding settings of the streamer, the conversion to mp4 can introduce A/V desync in rare cases. If you want to download the raw .ts video file from Twitch, enable this option. Cropping is not available in this mode.
+                                    Depending on the video containing muted parts, frame drops or the encoding settings of the streamer, the conversion to mp4 can introduce A/V desync in rare cases. If you want to download the raw .ts video file from Twitch, enable this option. Cropping (and autosplit) is not available in this mode.
                                 </TextBlock>
                             </StackPanel>
                         </ToolTip>

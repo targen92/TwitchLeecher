@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{77E1A8DD-462F-4331-8DFE-2B407B65708D}</ProjectGuid>
+    <ProjectGuid>{4366369E-85A9-41E8-8906-4790C56A37F2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WixAssemblyInfoExtension</RootNamespace>

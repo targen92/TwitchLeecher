@@ -33,7 +33,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Style="{StaticResource HeadlineTextCenter}" Text="{Binding HeaderText, FallbackValue='Installing Twitch Leecher X.Y'}" />
+                <TextBlock Grid.Column="0" Style="{StaticResource HeadlineTextCenter}" Text="{Binding HeaderText, FallbackValue='Installing TG Twitch Leecher X.Y'}" />
                 <Image Grid.Column="1" Style="{StaticResource tl_logo_small}" RenderOptions.BitmapScalingMode="Fant" />
             </Grid>
         </Grid>
@@ -44,7 +44,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <TextBlock Text="{Binding DescText, FallbackValue='Please wait while the Setup Wizard installs Twitch Leecher X.Y.'}" />
+            <TextBlock Text="{Binding DescText, FallbackValue='Please wait while the Setup Wizard installs TG Twitch Leecher X.Y.'}" />
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition />

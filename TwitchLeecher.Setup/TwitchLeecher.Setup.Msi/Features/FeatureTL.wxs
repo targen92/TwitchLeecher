@@ -275,7 +275,7 @@
       <Component Directory="INSTALLDIR">
         <File Id="TL_TwitchLeecher.exe" KeyPath="yes" Source="$(var.TL_SOURCE_DIR)TwitchLeecher.exe">
           <Shortcut Id="TL_Shortcut"
-                    Name="Twitch Leecher"
+                    Name="TG Twitch Leecher"
                     Directory="ShortcutsFolder"
                     Icon="TL_Icon.exe"
                     Advertise="yes">

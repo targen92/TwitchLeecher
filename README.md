@@ -1,8 +1,12 @@
-# Twitch Leecher
+# TG Twitch Leecher
 
 If you are looking for an extremely fast and easy to use Twitch VOD downloader, this is your tool!
 
 ![Twitch Leecher Screenshot](http://www.fakesmilerevolution.com/files/fsr/twitchleecher/tl14.jpg)
+
+## What mean TG?
+
+This application is not original. This is my (Targen, TG) version of Twitch Leecher with some improvements. So i edit name, guids and other to give an opportunity to install it independently with original TL.
 
 ## Is this project alive?????
 
@@ -12,7 +16,8 @@ Yes! Just because there are no commits for a longer period of time, does not mea
 - Requires .NET Framework 4.8
 - Requires Windows 7 SP1 64 Bit or higher
 
-The Installer is available [HERE](https://github.com/Franiac/TwitchLeecher/releases)
+The Installer is available [HERE](https://github.com/Targen92/TwitchLeecher/releases)
+The original Installer is available [HERE](https://github.com/Franiac/TwitchLeecher/releases)
 
 Once installed, future releases will automatically update current installations with a single click!
 
@@ -41,7 +46,7 @@ Nearly all of the well known VOD downloaders execute the download process via FF
 **IMPORTANT:** Help me beeing efficient, please! I am developing Twitch Leecher in my free time for no money. Contribute to the project by posting complete, structured and helpful issues which I can reproduce quickly without asking for missing information. When creating a new issue please follow the below checklist:
 
 - Windows Insider Builds are NOT supported!
-- Take a look at the latest closed issues [HERE](https://github.com/Franiac/TwitchLeecher/issues?q=is%3Aissue+is%3Aclosed). Maybe your problem has already been resolved
+- Take a look at the latest closed issues [HERE](https://github.com/Targen92/TwitchLeecher/issues?q=is%3Aissue+is%3Aclosed) or [HERE](https://github.com/Franiac/TwitchLeecher/issues?q=is%3Aissue+is%3Aclosed). Maybe your problem has already been resolved
 - Provide the version of Twitch Leecher you are using
 - Provide as much information about the VOD as possible (Url, Channel, ID)
 - Provide information about your operating system (e.g. Windows 10 64 Bit)
@@ -52,4 +57,4 @@ Nearly all of the well known VOD downloaders execute the download process via FF
 ![Twitch Leecher Log Screenshot](http://www.fakesmilerevolution.com/files/fsr/twitchleecher/tl14log.jpg)
 
 ## LICENSE
-[MIT License](https://github.com/Franiac/TwitchLeecher/blob/master/LICENSE)
+[MIT License](https://github.com/Targen92/TwitchLeecher/blob/master/LICENSE)

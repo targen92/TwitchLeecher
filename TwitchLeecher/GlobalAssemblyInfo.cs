@@ -1,10 +1,10 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyProduct("Twitch Leecher")]
-[assembly: AssemblyDescription("Twitch Broadcast Downloader")]
-[assembly: AssemblyCompany("Franiac")]
-[assembly: AssemblyCopyright("Copyright © 2018 Dominik Rebitzer")]
+[assembly: AssemblyProduct("TG Twitch Leecher")]
+[assembly: AssemblyDescription("Twitch Broadcast Downloader (by Targen)")]
+[assembly: AssemblyCompany("Targen92")]
+[assembly: AssemblyCopyright("Copyright © 2019 Targen92")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.7.0")]
+[assembly: AssemblyFileVersion("1.7.1")]
 [assembly: ComVisible(false)]
