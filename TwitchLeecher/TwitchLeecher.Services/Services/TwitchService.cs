@@ -895,6 +895,8 @@ namespace TwitchLeecher.Services.Services
 
                                         downloadParams.CropStart = splitTimes[splitTimes.Count - 1].Item1.HasValue;
                                         downloadParams.CropStartTime = splitTimes[splitTimes.Count - 1].Item1 ?? new TimeSpan();
+                                        downloadParams.CropEnd = false;
+                                        downloadParams.CropEndTime = totalTime;
                                         downloadParams.Filename = prepareFileName;
                                         downloadParams.Filename = _filenameService.SubstituteWildcards(prepareFileName, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
