@@ -181,7 +181,7 @@ namespace TwitchLeecher.Services.Services
 
         #region Methods
 
-        private WebClient CreateTwitchWebClient()
+        private WebClient CreatePublicApiWebClient()
         {
             WebClient wc = new WebClient();
             wc.Headers.Add(TWITCH_CLIENT_ID_HEADER, TWITCH_CLIENT_ID);
@@ -190,17 +190,12 @@ namespace TwitchLeecher.Services.Services
             return wc;
         }
 
-        private WebClient CreateAuthorizedTwitchWebClient()
+        private WebClient CreatePrivateApiWebClient()
         {
             WebClient wc = new WebClient();
             wc.Headers.Add(TWITCH_CLIENT_ID_HEADER, TWITCH_CLIENT_ID_WEB);
             wc.Headers.Add(TWITCH_V5_ACCEPT_HEADER, TWITCH_V5_ACCEPT);
             wc.Encoding = Encoding.UTF8;
-
-            if (IsAuthorized)
-            {
-                wc.Headers.Add(TWITCH_AUTHORIZATION_HEADER, "OAuth " + _twitchAuthInfo.AccessToken);
-            }
 
             return wc;
         }
@@ -212,8 +207,13 @@ namespace TwitchLeecher.Services.Services
                 throw new ArgumentNullException(nameof(id));
             }
 
-            using (WebClient webClient = CreateAuthorizedTwitchWebClient())
+            using (WebClient webClient = CreatePrivateApiWebClient())
             {
+                if (IsAuthorized)
+                {
+                    webClient.QueryString.Add("access_token", _twitchAuthInfo.AccessToken);
+                }
+
                 string accessTokenStr = webClient.DownloadString(string.Format(ACCESS_TOKEN_URL, id));
 
                 JObject accessTokenJson = JObject.Parse(accessTokenStr);
@@ -290,7 +290,7 @@ namespace TwitchLeecher.Services.Services
                 throw new ArgumentNullException(nameof(channel));
             }
 
-            using (WebClient webClient = CreateTwitchWebClient())
+            using (WebClient webClient = CreatePublicApiWebClient())
             {
                 webClient.QueryString.Add("login", channel);
 
@@ -321,7 +321,7 @@ namespace TwitchLeecher.Services.Services
 
                             if (!string.IsNullOrWhiteSpace(id))
                             {
-                                using (WebClient webClientChannel = CreateTwitchWebClient())
+                                using (WebClient webClientChannel = CreatePublicApiWebClient())
                                 {
                                     try
                                     {
@@ -351,7 +351,7 @@ namespace TwitchLeecher.Services.Services
         {
             if (!string.IsNullOrWhiteSpace(accessToken))
             {
-                using (WebClient webClient = CreateTwitchWebClient())
+                using (WebClient webClient = CreatePublicApiWebClient())
                 {
                     webClient.Headers.Add(TWITCH_AUTHORIZATION_HEADER, "OAuth " + accessToken);
 
@@ -468,7 +468,7 @@ namespace TwitchLeecher.Services.Services
 
             do
             {
-                using (WebClient webClient = CreateTwitchWebClient())
+                using (WebClient webClient = CreatePublicApiWebClient())
                 {
                     webClient.QueryString.Add("broadcast_type", broadcastTypeParam);
                     webClient.QueryString.Add("limit", TWITCH_MAX_LOAD_LIMIT.ToString());
@@ -644,7 +644,7 @@ namespace TwitchLeecher.Services.Services
 
         private TwitchVideo GetTwitchVideoFromId(int id)
         {
-            using (WebClient webClient = CreateTwitchWebClient())
+            using (WebClient webClient = CreatePublicApiWebClient())
             {
                 try
                 {
@@ -1055,7 +1055,7 @@ namespace TwitchLeecher.Services.Services
 
         private string RetrievePlaylistUrlForQuality(Action<string> log, TwitchVideoQuality quality, string vodId, VodAuthInfo vodAuthInfo)
         {
-            using (WebClient webClient = CreateAuthorizedTwitchWebClient())
+            using (WebClient webClient = CreatePrivateApiWebClient())
             {
                 webClient.Headers.Add("Accept", "*/*");
                 webClient.Headers.Add("Accept-Encoding", "gzip, deflate, br");
@@ -1411,7 +1411,7 @@ private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, stri
 
                 do
                 {
-                    using (WebClient webClient = CreateTwitchWebClient())
+                    using (WebClient webClient = CreatePublicApiWebClient())
                     {
                         webClient.QueryString.Add("limit", TWITCH_MAX_LOAD_LIMIT.ToString());
                         webClient.QueryString.Add("offset", offset.ToString());
