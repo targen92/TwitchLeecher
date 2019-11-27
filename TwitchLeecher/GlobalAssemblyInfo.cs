@@ -6,5 +6,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Targen92")]
 [assembly: AssemblyCopyright("Copyright © 2019 Targen92")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.7.3")]
+[assembly: AssemblyFileVersion("1.8.0")]
 [assembly: ComVisible(false)]
