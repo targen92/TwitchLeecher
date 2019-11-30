@@ -5,6 +5,7 @@
         xmlns:ctrl="clr-namespace:TwitchLeecher.Gui.Controls"
         xmlns:services="clr-namespace:TwitchLeecher.Services.Services;assembly=TwitchLeecher.Services"
         xmlns:converters="clr-namespace:TwitchLeecher.Gui.Converters"
+        xmlns:SysControls="clr-namespace:System.Windows.Controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -16,6 +17,7 @@
                 <ResourceDictionary>
                     <converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
                     <converters:InverseBooleanToVisibilityConverter x:Key="InverseBVConverter" />
+                    <BooleanToVisibilityConverter x:Key="BVConverter" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -82,6 +84,26 @@
             <TextBox Grid.Row="6" Grid.Column="2" IsReadOnly="{Binding UseCustomFilename, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}" Text="{Binding DownloadParams.Filename, UpdateSourceTrigger=PropertyChanged}" />
 
             <CheckBox Grid.Row="8" Grid.Column="2" IsChecked="{Binding UseCustomFilename, UpdateSourceTrigger=PropertyChanged}" Content="Use Custom Filename" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0" FontSize="12" />
+
+            <Grid Grid.Row="10" Grid.Column="2" Visibility="{Binding DownloadParams.DisableConversion, Converter={StaticResource ResourceKey='BVConverter'}}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-1,0,0,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding DownloadParams.StreamingNow}" Content="Online" VerticalAlignment="Center" />
+                <fa:ImageAwesome Grid.Row="0" Grid.Column="2" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download live stream" />
+                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(services:TwitchService.TIMER_STREAMINGNOW_INTERVAL_MIN),
+                                    StringFormat='Download living stream until it end. Check new parts every {0} minutes.'}"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+            </Grid>
 
             <Grid Grid.Row="10" Grid.Column="2" Visibility="{Binding DownloadParams.DisableConversion, Converter={StaticResource ResourceKey='InverseBVConverter'}}">
                 <Grid.RowDefinitions>

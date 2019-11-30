@@ -387,6 +387,7 @@ namespace TwitchLeecher.Gui.ViewModels
             //if (AutoSplitUseExtended && currentPrefs.DownloadDisableConversion)
             //    AutoSplitUseExtended = false;
 
+            _downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
             if (AutoSplitUseExtended && fileName.Contains(FilenameWildcards.UNIQNUMBER))
             {
                 string tempUniqNumb = FilenameWildcards.UNIQNUMBER.Insert(FilenameWildcards.UNIQNUMBER.Length - 1, "_temp");
