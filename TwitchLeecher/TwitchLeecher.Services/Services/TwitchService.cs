@@ -808,13 +808,27 @@ namespace TwitchLeecher.Services.Services
                                     setStatus("Update information");
 
                                     lastUpdateTime = DateTime.Now;
-                                    curPlaylistUrl = RetrievePlaylistUrlForQuality(log, quality, vodId, vodAuthInfo);
+                                    try
+                                    {
+                                        curPlaylistUrl = RetrievePlaylistUrlForQuality(log, quality, vodId, vodAuthInfo);
 
-                                    cancellationToken.ThrowIfCancellationRequested();
+                                        cancellationToken.ThrowIfCancellationRequested();
 
-                                    curVodPlaylist = RetrieveVodPlaylist(log, tempDir, curPlaylistUrl);
+                                        curVodPlaylist = RetrieveVodPlaylist(log, tempDir, curPlaylistUrl);
 
-                                    cancellationToken.ThrowIfCancellationRequested();
+                                        cancellationToken.ThrowIfCancellationRequested();
+                                    }
+                                    catch (System.Net.WebException exc)
+                                    {
+                                        if ((exc.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.Forbidden)
+                                        {
+                                            curPlaylistUrl = null;
+                                            curVodPlaylist = new VodPlaylist();
+                                            curVodPlaylist.AddRange(alreadyDownloadedVodPlaylist);
+                                        }
+                                        else
+                                            throw exc;
+                                    }
 
                                     totalTime = CalcTotalTime(curVodPlaylist);
                                     if (!cropEnd) downloadParams.CropEndTime = totalTime;
