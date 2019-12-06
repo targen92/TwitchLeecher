@@ -30,6 +30,7 @@ namespace TwitchLeecher.Services.Services
         #region Constants
 
         static public int TIMER_STREAMINGNOW_INTERVAL_MIN { get { return 5; } }//in minutes
+        static public int CHECK_NEW_PARTS_COUNT { get { return 2; } }
 
         private const string KRAKEN_URL = "https://api.twitch.tv/kraken";
         private const string VIDEO_URL = "https://api.twitch.tv/kraken/videos/{0}";
@@ -795,9 +796,14 @@ namespace TwitchLeecher.Services.Services
 
                             if (downloadParams.StreamingNow)
                             {
+                                int exceptionCount = 0;
+                                int noNewPartsCount = 0;
                                 do
                                 {
-                                    setStatus("Wait streaming");
+                                    if (noNewPartsCount == 0)
+                                        setStatus("Wait streaming");
+                                    else
+                                        setStatus($"Wait streaming, check {noNewPartsCount}");
 
                                     for (int index = TIMER_STREAMINGNOW_INTERVAL_MIN * 60 - (int)(DateTime.Now - lastUpdateTime).TotalSeconds; index >= 0; index--)
                                     {
@@ -818,18 +824,32 @@ namespace TwitchLeecher.Services.Services
 
                                         cancellationToken.ThrowIfCancellationRequested();
                                     }
-                                    catch (System.Net.WebException exc)
+                                    catch (WebException exc)
                                     {
-                                        if ((exc.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.Forbidden)
+                                        var statusCode = (exc.Response as HttpWebResponse)?.StatusCode;
+                                        if (statusCode != null)
+                                            //|| statusCode == HttpStatusCode.Forbidden
+                                            //|| statusCode == HttpStatusCode.ServiceUnavailable
                                         {
+                                            exceptionCount++;
+                                            log($"{Environment.NewLine}Found WebException with status code {statusCode}, will continue conversation{Environment.NewLine}{exc.Message}");
                                             curPlaylistUrl = null;
                                             curVodPlaylist = new VodPlaylist();
-                                            curVodPlaylist.AddRange(alreadyDownloadedVodPlaylist);
+                                            curVodPlaylist.AddRange(allVodPlaylist);
+                                            if (exceptionCount < 2)
+                                            {
+                                                setStatus("Catch error, try get infomation again");
+                                                lastUpdateTime = lastUpdateTime.AddMinutes(-TIMER_STREAMINGNOW_INTERVAL_MIN);
+                                                Thread.Sleep(1000);
+                                                continue;
+                                            }
+                                            setStatus("Catch error, convert already downloaded parts");
                                         }
                                         else
                                             throw exc;
                                     }
 
+                                    exceptionCount = 0;
                                     totalTime = CalcTotalTime(curVodPlaylist);
                                     if (!cropEnd) downloadParams.CropEndTime = totalTime;
                                     downloadParams.Video.Length = totalTime;
@@ -844,7 +864,7 @@ namespace TwitchLeecher.Services.Services
                                     alreadyDownloadedVodPlaylist.AddRange(curVodPlaylist);
                                     allVodPlaylist.AddRange(curVodPlaylist);
 
-                                    log($"{curVodPlaylist.Count} new parts, total video time {totalTime.ToString()}");
+                                    log($"{Environment.NewLine}{curVodPlaylist.Count} new parts, total video time {totalTime.ToString()}");
 
                                     DownloadParts(log, setStatus, setProgress, curVodPlaylist, cancellationToken);
 
@@ -915,11 +935,11 @@ namespace TwitchLeecher.Services.Services
                                         downloadParams.Filename = _filenameService.SubstituteWildcards(prepareFileName, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
                                         cancellationToken.ThrowIfCancellationRequested();
-
-                                        continue;//because it is possible only if there was new 
                                     }
+
+                                    noNewPartsCount = curVodPlaylist.Count > 0 ? 0 : noNewPartsCount + 1;
                                 }
-                                while (curVodPlaylist.Count > 0);
+                                while (curVodPlaylist.Count > 0 || noNewPartsCount < CHECK_NEW_PARTS_COUNT);
 
                             }
 
@@ -938,7 +958,7 @@ namespace TwitchLeecher.Services.Services
                             cancellationToken.ThrowIfCancellationRequested();
 
                             setDownloadState(DownloadState.Concatenation);
-                            
+
                             downloadParams.Filename = prepareFileName;
                             downloadParams.Filename = _filenameService.SubstituteWildcards(prepareFileName, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, downloadParams.CropEndTime);
                             string outputFile = downloadParams.FullPath;
@@ -1034,7 +1054,7 @@ namespace TwitchLeecher.Services.Services
             log(Environment.NewLine + "Download Url: " + downloadParams.Video.Url);
             log(Environment.NewLine + "Crop Start: " + (downloadParams.CropStart ? "Yes (" + downloadParams.CropStartTime.ToDaylessString() + ")" : "No"));
             log(Environment.NewLine + "Crop End: " + (downloadParams.CropEnd ? "Yes (" + downloadParams.CropEndTime.ToDaylessString() + ")" : "No"));
-            
+
             log(Environment.NewLine + Environment.NewLine + "OUTPUT INFO");
             log(Environment.NewLine + "--------------------------------------------------------------------------------------------");
             log(Environment.NewLine + "Disable Conversion: " + (downloadParams.DisableConversion ? "Yes" : "No"));
@@ -1101,10 +1121,10 @@ namespace TwitchLeecher.Services.Services
                 double partLength = part.Length;
                 lengthSum += partLength;
             }
-            return new TimeSpan(0, 0, (int) lengthSum);
+            return new TimeSpan(0, 0, (int)lengthSum);
         }
 
-private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, string playlistUrl)
+        private VodPlaylist RetrieveVodPlaylist(Action<string> log, string tempDir, string playlistUrl)
         {
             using (WebClient webClient = new WebClient())
             {
