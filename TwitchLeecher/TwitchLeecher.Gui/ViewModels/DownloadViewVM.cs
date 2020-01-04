@@ -294,9 +294,9 @@ namespace TwitchLeecher.Gui.ViewModels
         {
             get
             {
-                if (_downloadParams.AutoSplit == false || DownloadParams.AutoSplitTime.TotalSeconds < Preferences.MinSplitLength || DownloadParams.CroppedLength.TotalSeconds < Preferences.MinSplitLength)
+                if (_downloadParams.AutoSplit == false || DownloadParams.AutoSplitTime.TotalSeconds < Preferences.MIN_SPLIT_LENGTH || DownloadParams.CroppedLength.TotalSeconds < Preferences.MIN_SPLIT_LENGTH)
                     return 1;
-                return Math.Max((int)Math.Ceiling((DownloadParams.CroppedLength.TotalSeconds - Preferences.MinSplitLength) / DownloadParams.AutoSplitTime.TotalSeconds), 1);
+                return Math.Max((int)Math.Ceiling((DownloadParams.CroppedLength.TotalSeconds - Preferences.MIN_SPLIT_LENGTH) / DownloadParams.AutoSplitTime.TotalSeconds), 1);
             }
          }
 
@@ -433,7 +433,7 @@ namespace TwitchLeecher.Gui.ViewModels
                     if (!HasErrors)
                     {
                         int downloadAddedCount = 1;
-                        if (_downloadParams.AutoSplit && _downloadParams.AutoSplitTime.TotalSeconds > Preferences.MinSplitLength)
+                        if (_downloadParams.AutoSplit && _downloadParams.AutoSplitTime.TotalSeconds > Preferences.MIN_SPLIT_LENGTH)
                         {
                             string baseFolder = Path.GetDirectoryName(_downloadParams.FullPath);
                             string baseFilename = Path.GetFileName(_downloadParams.FullPath);

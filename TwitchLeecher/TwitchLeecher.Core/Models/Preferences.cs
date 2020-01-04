@@ -9,8 +9,10 @@ namespace TwitchLeecher.Core.Models
 {
     public class Preferences : BindableBase
     {
-        static public int MinSplitLength { get { return 120; } }//in seconds
+        static public int MIN_SPLIT_LENGTH { get { return 120; } }//in seconds
         //At least 60 seconds
+        static public int TIMER_STREAMINGNOW_INTERVAL_MIN { get { return 5; } }//in minutes
+        static public int CHECK_NEW_PARTS_COUNT { get { return 2; } }
 
         #region Fields
 
@@ -56,6 +58,10 @@ namespace TwitchLeecher.Core.Models
 
         private bool _downloadAndConcatSimultaneously;
 
+        private int _miscRetryOnErrorInstantCount;
+
+        private int _miscRetryOnErrorPauseCount;
+
         private bool _miscUseExternalPlayer;
 
         private string _miscExternalPlayer;
@@ -97,6 +103,30 @@ namespace TwitchLeecher.Core.Models
             set
             {
                 SetProperty(ref _appShowDonationButton, value);
+            }
+        }
+        
+        public int MiscRetryOnErrorInstantCount
+        {
+            get
+            {
+                return _miscRetryOnErrorInstantCount;
+            }
+            set
+            {
+                SetProperty(ref _miscRetryOnErrorInstantCount, value);
+            }
+        }
+
+        public int MiscRetryOnErrorPauseCount
+        {
+            get
+            {
+                return _miscRetryOnErrorPauseCount;
+            }
+            set
+            {
+                SetProperty(ref _miscRetryOnErrorPauseCount, value);
             }
         }
 
@@ -371,6 +401,26 @@ namespace TwitchLeecher.Core.Models
                 }
             }
 
+            currentProperty = nameof(MiscRetryOnErrorInstantCount);
+
+            if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+            {
+                if (_miscRetryOnErrorInstantCount < 0 || _miscRetryOnErrorInstantCount > 99)
+                {
+                    AddError(currentProperty, "Value has to be between 0 and 99!");
+                }
+            }
+
+            currentProperty = nameof(MiscRetryOnErrorPauseCount);
+
+            if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+            {
+                if (_miscRetryOnErrorPauseCount < 0 || _miscRetryOnErrorPauseCount > 99)
+                {
+                    AddError(currentProperty, "Value has to be between 0 and 99!");
+                }
+            }
+
             currentProperty = nameof(SearchChannelName);
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
@@ -453,9 +503,9 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_downloadSplitUse && !_downloadDisableConversion && _downloadSplitTime.TotalSeconds < Preferences.MinSplitLength)
+                if (_downloadSplitUse && !_downloadDisableConversion && _downloadSplitTime.TotalSeconds < Preferences.MIN_SPLIT_LENGTH)
                 {
-                    string errorMessage = $"Split time has to be equal or more {Preferences.MinSplitLength} seconds!";
+                    string errorMessage = $"Split time has to be equal or more {Preferences.MIN_SPLIT_LENGTH} seconds!";
                     AddError(currentProperty, errorMessage);
                     AddError(nameof(DownloadSplitUse), errorMessage);
                 }
@@ -465,9 +515,9 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_downloadSplitUse && !_downloadDisableConversion && (_splitOverlapSeconds >= Preferences.MinSplitLength / 2 || _splitOverlapSeconds < 0))
+                if (_downloadSplitUse && !_downloadDisableConversion && (_splitOverlapSeconds >= Preferences.MIN_SPLIT_LENGTH / 2 || _splitOverlapSeconds < 0))
                 {
-                    string errorMessage = $"Overlap seconds has to be less than {Preferences.MinSplitLength / 2} seconds!";
+                    string errorMessage = $"Overlap seconds has to be less than {Preferences.MIN_SPLIT_LENGTH / 2} seconds!";
                     AddError(currentProperty, errorMessage);
                     AddError(nameof(DownloadSplitUse), errorMessage);
                 }
@@ -481,6 +531,8 @@ namespace TwitchLeecher.Core.Models
                 Version = Version,
                 AppCheckForUpdates = AppCheckForUpdates,
                 AppShowDonationButton = AppShowDonationButton,
+                MiscRetryOnErrorInstantCount = MiscRetryOnErrorInstantCount,
+                MiscRetryOnErrorPauseCount = MiscRetryOnErrorPauseCount,
                 MiscUseExternalPlayer = MiscUseExternalPlayer,
                 MiscExternalPlayer = MiscExternalPlayer,
                 SearchChannelName = SearchChannelName,

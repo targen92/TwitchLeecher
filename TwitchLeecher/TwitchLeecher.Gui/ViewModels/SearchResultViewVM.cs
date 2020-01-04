@@ -198,7 +198,7 @@ namespace TwitchLeecher.Gui.ViewModels
                             string filename = currentPrefs.DownloadFileName;
                             filename = _filenameService.EnsureExtension(filename, currentPrefs.DownloadDisableConversion);
 
-                            if (currentPrefs.DownloadDisableConversion || video.Length.TotalSeconds < currentPrefs.DownloadSplitTime.TotalSeconds + Preferences.MinSplitLength)
+                            if (currentPrefs.DownloadDisableConversion || video.Length.TotalSeconds < currentPrefs.DownloadSplitTime.TotalSeconds + Preferences.MIN_SPLIT_LENGTH)
                                 currentPrefs.DownloadSplitUse = false;
 
                             if (currentPrefs.DownloadSplitUse)

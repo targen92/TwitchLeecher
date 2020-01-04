@@ -501,6 +501,8 @@
                     <RowDefinition SharedSizeGroup="r1" />
                     <RowDefinition Height="10" />
                     <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="g2" />
@@ -587,8 +589,37 @@
                         <ToolTip Width="350">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Auto Split" />
-                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.MinSplitLength), 
+                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.MIN_SPLIT_LENGTH), 
                                     StringFormat='Auto split stream in part with this length. Also add extra seconds to overlap between video parts. Split time has to be at least {0} seconds, parts smaller will be attached to previous part.'}"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Retry on error" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="6" Grid.Column="2" Grid.IsSharedSizeScope="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="7" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="7" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"  Text="Instant retry" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="2" Style="{StaticResource TlTimeUpDown}" Value="{Binding CurrentPreferences.MiscRetryOnErrorInstantCount, UpdateSourceTrigger=LostFocus}" Maximum="99" Minimum="0"/>
+                    <TextBlock Grid.Column="4"  Text="Pause retry" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="6" Style="{StaticResource TlTimeUpDown}" Value="{Binding CurrentPreferences.MiscRetryOnErrorPauseCount, UpdateSourceTrigger=LostFocus}" Maximum="99" Minimum="0"/>
+                </Grid>
+                <fa:ImageAwesome Grid.Row="6" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Retry on error" />
+                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN), 
+                                    StringFormat='On error, retry downloading this times. Instant mean retry right after error, Pause mean retry with {0} minute pause after error.'}"/>
                             </StackPanel>
                         </ToolTip>
                     </fa:ImageAwesome.ToolTip>
