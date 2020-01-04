@@ -28,9 +28,7 @@ namespace TwitchLeecher.Services.Services
     {
         #region Constants
 
-        static public int TIMER_STREAMINGNOW_INTERVAL_MIN { get { return 5; } }//in minutes
-        static public int CHECK_NEW_PARTS_COUNT { get { return 2; } }
-
+        private const string KRAKEN_URL = "https://api.twitch.tv/kraken";
         private const string VIDEO_URL = "https://api.twitch.tv/kraken/videos/{0}";
         private const string GAMES_URL = "https://api.twitch.tv/kraken/games/top";
         private const string USERS_URL = "https://api.twitch.tv/kraken/users";
@@ -672,7 +670,7 @@ namespace TwitchLeecher.Services.Services
                         TwitchVideoQuality quality = downloadParams.Quality;
 
                         VodAuthInfo vodAuthInfo = downloadParams.VodAuthInfo;
-
+                        
                         string prepareFileName = downloadParams.Filename;
                         downloadParams.Filename = _filenameService.SubstituteWildcards(prepareFileName, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
@@ -685,6 +683,8 @@ namespace TwitchLeecher.Services.Services
                         Task downloadVideoTask = new Task(() =>
                         {
                             setStatus("Initializing");
+                            int exceptionPauseCount = 0;
+                            int exceptionInstantCount = 0;
 
                             log("Download task has been started!");
 
@@ -695,16 +695,63 @@ namespace TwitchLeecher.Services.Services
                             cancellationToken.ThrowIfCancellationRequested();
 
                             DateTime lastUpdateTime = DateTime.Now;
-                            string curPlaylistUrl = RetrievePlaylistUrlForQuality(log, quality, vodId, vodAuthInfo);
+                            string curPlaylistUrl = string.Empty;
+                            VodPlaylist curVodPlaylist = new VodPlaylist();
 
-                            cancellationToken.ThrowIfCancellationRequested();
+                            do
+                            {
+                                try
+                                {
+                                    curPlaylistUrl = RetrievePlaylistUrlForQuality(log, quality, vodId, vodAuthInfo);
 
-                            VodPlaylist curVodPlaylist = RetrieveVodPlaylist(log, tempDir, curPlaylistUrl);
+                                    cancellationToken.ThrowIfCancellationRequested();
 
-                            cancellationToken.ThrowIfCancellationRequested();
+                                    curVodPlaylist = RetrieveVodPlaylist(log, tempDir, curPlaylistUrl);
 
+                                    cancellationToken.ThrowIfCancellationRequested();
+                                }
+                                catch (WebException exc)
+                                {
+                                    var statusCode = (exc.Response as HttpWebResponse)?.StatusCode;
+                                    if (statusCode != null)
+                                    //|| statusCode == HttpStatusCode.Forbidden
+                                    //|| statusCode == HttpStatusCode.ServiceUnavailable
+                                    {
+                                        exceptionInstantCount++;
+                                        log($"{Environment.NewLine}Found WebException with status code {statusCode}, will continue conversation{Environment.NewLine}{exc.Message}");
+                                        curPlaylistUrl = null;
+                                        curVodPlaylist = new VodPlaylist();
+                                        if (exceptionInstantCount <= _preferencesService.CurrentPreferences.MiscRetryOnErrorInstantCount)
+                                        {
+                                            setStatus($"Catch error, retry {exceptionInstantCount}");
+                                            lastUpdateTime = lastUpdateTime.AddMinutes(-Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN);
+                                            Thread.Sleep(1000);
+                                            continue;
+                                        }
+                                        exceptionInstantCount = 0;
+                                        exceptionPauseCount++;
+                                        if (exceptionPauseCount <= _preferencesService.CurrentPreferences.MiscRetryOnErrorPauseCount)
+                                        {
+                                            setStatus($"Catch error, retry {exceptionPauseCount} with wait");
+                                            for (int index = Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN * 60; index >= 0; index--)
+                                            {
+                                                Thread.Sleep(1000);
+                                                cancellationToken.ThrowIfCancellationRequested();
+                                            }
+                                            continue;
+                                        }
+                                        setStatus("Error, convert already downloaded parts");
+                                    }
+                                    else
+                                        throw exc;
+                                }
+                                break;
+                            }
+                            while (true);
+                            exceptionInstantCount = 0;
+                            exceptionPauseCount = 0;
                             totalTime = CalcTotalTime(curVodPlaylist);
-                            if (!cropEnd)//Update total video time of downloads tab
+                            if (!cropEnd && downloadParams.CropEndTime < totalTime)//Update total video time of downloads tab
                                 downloadParams.CropEndTime = totalTime;
                             downloadParams.Video.Length = totalTime;
 
@@ -726,7 +773,6 @@ namespace TwitchLeecher.Services.Services
 
                             if (downloadParams.StreamingNow)
                             {
-                                int exceptionCount = 0;
                                 int noNewPartsCount = 0;
                                 do
                                 {
@@ -735,7 +781,7 @@ namespace TwitchLeecher.Services.Services
                                     else
                                         setStatus($"Wait streaming, check {noNewPartsCount}");
 
-                                    for (int index = TIMER_STREAMINGNOW_INTERVAL_MIN * 60 - (int)(DateTime.Now - lastUpdateTime).TotalSeconds; index >= 0; index--)
+                                    for (int index = Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN * 60 - (int)(DateTime.Now - lastUpdateTime).TotalSeconds; index >= 0; index--)
                                     {
                                         Thread.Sleep(1000);
                                         cancellationToken.ThrowIfCancellationRequested();
@@ -761,27 +807,36 @@ namespace TwitchLeecher.Services.Services
                                             //|| statusCode == HttpStatusCode.Forbidden
                                             //|| statusCode == HttpStatusCode.ServiceUnavailable
                                         {
-                                            exceptionCount++;
+                                            exceptionInstantCount++;
                                             log($"{Environment.NewLine}Found WebException with status code {statusCode}, will continue conversation{Environment.NewLine}{exc.Message}");
                                             curPlaylistUrl = null;
                                             curVodPlaylist = new VodPlaylist();
                                             curVodPlaylist.AddRange(allVodPlaylist);
-                                            if (exceptionCount < 2)
+                                            if (exceptionInstantCount <= _preferencesService.CurrentPreferences.MiscRetryOnErrorInstantCount)
                                             {
-                                                setStatus("Catch error, try get infomation again");
-                                                lastUpdateTime = lastUpdateTime.AddMinutes(-TIMER_STREAMINGNOW_INTERVAL_MIN);
+                                                setStatus($"Catch error ({exceptionInstantCount}), retry");
+                                                lastUpdateTime = lastUpdateTime.AddMinutes(-Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN);
                                                 Thread.Sleep(1000);
                                                 continue;
                                             }
-                                            setStatus("Catch error, convert already downloaded parts");
+                                            exceptionInstantCount = 0;
+                                            exceptionPauseCount++;
+                                            if (exceptionPauseCount <= _preferencesService.CurrentPreferences.MiscRetryOnErrorPauseCount)
+                                            {
+                                                setStatus($"Catch error ({exceptionPauseCount}), wait retry");
+                                                continue;
+                                            }
+                                            setStatus("Error, convert already downloaded parts");
                                         }
                                         else
                                             throw exc;
                                     }
 
-                                    exceptionCount = 0;
+                                    exceptionInstantCount = 0;
+                                    exceptionPauseCount = 0;
                                     totalTime = CalcTotalTime(curVodPlaylist);
-                                    if (!cropEnd) downloadParams.CropEndTime = totalTime;
+                                    if (!cropEnd && downloadParams.CropEndTime < totalTime)
+                                        downloadParams.CropEndTime = totalTime;
                                     downloadParams.Video.Length = totalTime;
 
                                     cancellationToken.ThrowIfCancellationRequested();
@@ -800,7 +855,7 @@ namespace TwitchLeecher.Services.Services
 
                                     cancellationToken.ThrowIfCancellationRequested();
 
-                                    if (downloadParams.AutoSplit && downloadParams.AutoSplitTime.TotalSeconds < (totalTime.TotalSeconds - cropStartTime.TotalSeconds) - Preferences.MinSplitLength)
+                                    if (downloadParams.AutoSplit && downloadParams.AutoSplitTime.TotalSeconds < (totalTime.TotalSeconds - cropStartTime.TotalSeconds) - Preferences.MIN_SPLIT_LENGTH)
                                     {
                                         var splitTimes = TwitchVideo.GetListOfSplitTimes(totalTime, cropStart ? (TimeSpan?)cropStartTime : null, null, downloadParams.AutoSplitTime, downloadParams.AutoSplitOverlap);
 
@@ -869,7 +924,7 @@ namespace TwitchLeecher.Services.Services
 
                                     noNewPartsCount = curVodPlaylist.Count > 0 ? 0 : noNewPartsCount + 1;
                                 }
-                                while (curVodPlaylist.Count > 0 || noNewPartsCount < CHECK_NEW_PARTS_COUNT);
+                                while (curVodPlaylist.Count > 0 || noNewPartsCount < Preferences.CHECK_NEW_PARTS_COUNT);
 
                             }
 

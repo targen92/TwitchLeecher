@@ -49,8 +49,10 @@ namespace TwitchLeecher.Services.Services
         private const string DOWNLOAD_SPLITOVERLAP_EL = "SplitOverlapSeconds";
 
         private const string DOWNLOAD_CONCAT_SIMULTANEOUSLY_EL = "DownloadAndConcatSimultaneously";
-        
+
         private const string MISC_EL = "Misc";
+        private const string MISC_RETRY_ON_ERROR_INSTANT_COUNT_EL = "RetryOnErrorInstantCount";
+        private const string MISC_RETRY_ON_ERROR_PAUSE_COUNT_EL = "RetryOnErrorPauseCount";
         private const string MISC_USEEXTERNALPLAYER_EL = "UseExternalPlayer";
         private const string MISC_EXTERNALPLAYER_EL = "ExternalPlayer";
 
@@ -237,7 +239,7 @@ namespace TwitchLeecher.Services.Services
                 XElement downloadSplitUseEl = new XElement(DOWNLOAD_SPLITUSE_EL);
                 downloadSplitUseEl.SetValue(preferences.DownloadSplitUse);
                 downloadEl.Add(downloadSplitUseEl);
-                
+
                 XElement downloadSplitTimeEl = new XElement(DOWNLOAD_SPLITTIME_EL);
                 downloadSplitTimeEl.SetValue(DateTime.MinValue + preferences.DownloadSplitTime);
                 downloadEl.Add(downloadSplitTimeEl);
@@ -247,6 +249,14 @@ namespace TwitchLeecher.Services.Services
                 downloadEl.Add(splitOverlapSecondsEl);
 
                 // Miscellanious
+                XElement miscRetryOnErrorInstantCountEl = new XElement(MISC_RETRY_ON_ERROR_INSTANT_COUNT_EL);
+                miscRetryOnErrorInstantCountEl.SetValue(preferences.MiscRetryOnErrorInstantCount);
+                miscEl.Add(miscRetryOnErrorInstantCountEl);
+
+                XElement miscRetryOnErrorPauseCountEl = new XElement(MISC_RETRY_ON_ERROR_PAUSE_COUNT_EL);
+                miscRetryOnErrorPauseCountEl.SetValue(preferences.MiscRetryOnErrorPauseCount);
+                miscEl.Add(miscRetryOnErrorPauseCountEl);
+
                 XElement miscUseExternalPlayerEl = new XElement(MISC_USEEXTERNALPLAYER_EL);
                 miscUseExternalPlayerEl.SetValue(preferences.MiscUseExternalPlayer);
                 miscEl.Add(miscUseExternalPlayerEl);
@@ -615,6 +625,34 @@ namespace TwitchLeecher.Services.Services
 
                         if (miscEl != null)
                         {
+                            XElement miscRetryOnErrorInstantCountEl = miscEl.Element(MISC_RETRY_ON_ERROR_INSTANT_COUNT_EL);
+
+                            if (miscRetryOnErrorInstantCountEl != null)
+                            {
+                                try
+                                {
+                                    preferences.MiscRetryOnErrorInstantCount = miscRetryOnErrorInstantCountEl.GetValueAsInt();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement miscRetryOnErrorPauseCountEl = miscEl.Element(MISC_RETRY_ON_ERROR_PAUSE_COUNT_EL);
+
+                            if (miscRetryOnErrorPauseCountEl != null)
+                            {
+                                try
+                                {
+                                    preferences.MiscRetryOnErrorPauseCount = miscRetryOnErrorPauseCountEl.GetValueAsInt();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
                             XElement miscUseExternalPlayerEl = miscEl.Element(MISC_USEEXTERNALPLAYER_EL);
 
                             if (miscUseExternalPlayerEl != null)
@@ -672,6 +710,8 @@ namespace TwitchLeecher.Services.Services
                 DownloadAndConcatSimultaneously = false,
                 DownloadSplitTime = new TimeSpan(),
                 DownloadSplitUse = false,
+                MiscRetryOnErrorInstantCount = 2,
+                MiscRetryOnErrorPauseCount = 1,
                 MiscUseExternalPlayer = false,
                 MiscExternalPlayer = null,
                 SplitOverlapSeconds = 10,

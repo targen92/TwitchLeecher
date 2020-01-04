@@ -58,7 +58,7 @@ namespace TwitchLeecher.Core.Models
             _disableConversion = disableConversion;
 
             _autoSplitTime = autoSplitTime;
-            _autoSplit = autoSplitUse && (autoSplitTime.TotalSeconds > Preferences.MinSplitLength && autoSplitTime.TotalSeconds < video.Length.TotalSeconds + Preferences.MinSplitLength);
+            _autoSplit = autoSplitUse && (autoSplitTime.TotalSeconds > Preferences.MIN_SPLIT_LENGTH && autoSplitTime.TotalSeconds < video.Length.TotalSeconds + Preferences.MIN_SPLIT_LENGTH);
             _autoSplitOverlap = autoSplitOverlap;
 
             _cropEndTime = video.Length;
@@ -392,11 +392,11 @@ namespace TwitchLeecher.Core.Models
             {
                 if (_autoSplit)
                 {
-                    if (_autoSplitTime.TotalSeconds < Preferences.MinSplitLength)
+                    if (_autoSplitTime.TotalSeconds < Preferences.MIN_SPLIT_LENGTH)
                     {
-                        AddError(currentProperty, $"The split time has to be at least {Preferences.MinSplitLength}s long!");
+                        AddError(currentProperty, $"The split time has to be at least {Preferences.MIN_SPLIT_LENGTH}s long!");
                     }
-                    else if (!_filename.Contains(FilenameWildcards.UNIQNUMBER) && _autoSplitTime.TotalSeconds < _video.Length.TotalSeconds + Preferences.MinSplitLength)
+                    else if (!_filename.Contains(FilenameWildcards.UNIQNUMBER) && _autoSplitTime.TotalSeconds < _video.Length.TotalSeconds + Preferences.MIN_SPLIT_LENGTH)
                     {
                         AddError(currentProperty, $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!");
                         AddError(nameof(Filename), $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!");
@@ -408,9 +408,9 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_autoSplit && (_autoSplitOverlap >= Preferences.MinSplitLength / 2 || _autoSplitOverlap <0))
+                if (_autoSplit && (_autoSplitOverlap >= Preferences.MIN_SPLIT_LENGTH / 2 || _autoSplitOverlap <0))
                 {
-                    string errorMessage = $"Overlap seconds has to be less than {Preferences.MinSplitLength / 2} seconds!";
+                    string errorMessage = $"Overlap seconds has to be less than {Preferences.MIN_SPLIT_LENGTH / 2} seconds!";
                     AddError(currentProperty, errorMessage);
                 }
             }

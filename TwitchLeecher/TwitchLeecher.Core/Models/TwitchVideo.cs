@@ -143,7 +143,7 @@ namespace TwitchLeecher.Core.Models
                 curStart = curEnd.Add(new TimeSpan(0, 0, -overlapSec));
                 curEnd = curEnd.Add(splitTime);
             }
-            if (endCrop.Value.TotalSeconds - (curStart?.TotalSeconds ?? 0) < Preferences.MinSplitLength && result.Count > 0)
+            if (endCrop.Value.TotalSeconds - (curStart?.TotalSeconds ?? 0) < Preferences.MIN_SPLIT_LENGTH && result.Count > 0)
             {//Add remaining seconds to last part
                 result[result.Count - 1] = new Tuple<TimeSpan?, TimeSpan?>(result[result.Count - 1].Item1, endCrop == videoLength ? null : endCrop);
             }
