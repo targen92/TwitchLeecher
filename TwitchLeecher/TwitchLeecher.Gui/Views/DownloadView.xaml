@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ctrl="clr-namespace:TwitchLeecher.Gui.Controls"
         xmlns:services="clr-namespace:TwitchLeecher.Services.Services;assembly=TwitchLeecher.Services"
+        xmlns:prefs="clr-namespace:TwitchLeecher.Core.Models;assembly=TwitchLeecher.Core"
         xmlns:converters="clr-namespace:TwitchLeecher.Gui.Converters"
         xmlns:SysControls="clr-namespace:System.Windows.Controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/">
@@ -97,7 +98,7 @@
                         <ToolTip Width="350">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download live stream" />
-                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(services:TwitchService.TIMER_STREAMINGNOW_INTERVAL_MIN),
+                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN),
                                     StringFormat='Download living stream until it end. Check new parts every {0} minutes.'}"/>
                             </StackPanel>
                         </ToolTip>
@@ -171,7 +172,7 @@
                             <ToolTip Width="350">
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download live stream" />
-                                    <TextBlock TextAlignment="Justify" Text="{Binding Path=(services:TwitchService.TIMER_STREAMINGNOW_INTERVAL_MIN),
+                                    <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.TIMER_STREAMINGNOW_INTERVAL_MIN),
                                     StringFormat='Download living stream until it end. Check new parts every {0} minutes, also able to auto split video. Incompatible with end crop'}"/>
                                 </StackPanel>
                             </ToolTip>

@@ -49,6 +49,10 @@ namespace TwitchLeecher.Services.Services
 
                             DateTime released = DateTime.Parse(releasedStr, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
 
+                            //Check that minor version has same parity - with or without sub
+                            if (releaseVersion.Major == localVersion.Major && releaseVersion.Minor >= 7 && (releaseVersion.Minor - localVersion.Minor) % 2 != 0)
+                                continue;
+
                             if (releaseVersion > localVersion)
                             {
                                 return new UpdateInfo(releaseVersion, released, string.Format(latestReleaseUrl, releaseVersion.ToString(3)), infoStr);
