@@ -100,12 +100,13 @@ namespace TwitchLeecher.Core.Models
         {
             get
             {
+                var onlineState = (DownloadParams?.StreamingNow ?? false) ? "Online, " : "";
                 if (IsDownloading)
                 {
-                    return _status;
+                    return onlineState + _status;
                 }
 
-                return _downloadState.ToString();
+                return onlineState + _downloadState.ToString();
             }
             private set
             {
