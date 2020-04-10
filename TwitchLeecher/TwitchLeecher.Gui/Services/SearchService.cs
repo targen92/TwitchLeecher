@@ -100,7 +100,7 @@ namespace TwitchLeecher.Gui.Services
                 }
                 else
                 {
-                    System.Windows.Application.Current.Dispatcher.Invoke(() => _notificationService.ShowNotification("Search result info updated"));
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => _notificationService.ShowNotification("Search completed"));
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
 

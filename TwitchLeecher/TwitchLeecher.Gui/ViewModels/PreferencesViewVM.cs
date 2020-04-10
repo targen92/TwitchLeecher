@@ -25,6 +25,10 @@ namespace TwitchLeecher.Gui.ViewModels
         private ICommand _removeFavouriteChannelCommand;
         private ICommand _chooseDownloadTempFolderCommand;
         private ICommand _chooseDownloadFolderCommand;
+        private ICommand _useOnlineCheckChangeCommand;
+        private ICommand _addOnlineCheckChannelCommand;
+        private ICommand _removeOnlineCheckChannelCommand;
+        private ICommand _chooseOnlineCheckDownloadFolderCommand;
         private ICommand _chooseExternalPlayerCommand;
         private ICommand _clearExternalPlayerCommand;
         private ICommand _saveCommand;
@@ -120,6 +124,58 @@ namespace TwitchLeecher.Gui.ViewModels
                 }
 
                 return _chooseDownloadFolderCommand;
+            }
+        }
+
+        public ICommand UseOnlineCheckChangeCommand
+        {
+            get
+            {
+                if (_useOnlineCheckChangeCommand == null)
+                {
+                    _useOnlineCheckChangeCommand = new DelegateCommand(UseOnlineCheckChange);
+                }
+
+                return _useOnlineCheckChangeCommand;
+            }
+        }
+
+        public ICommand AddOnlineCheckChannelCommand
+        {
+            get
+            {
+                if (_addOnlineCheckChannelCommand == null)
+                {
+                    _addOnlineCheckChannelCommand = new DelegateCommand(AddCheckOnlineChannel);
+                }
+
+                return _addOnlineCheckChannelCommand;
+            }
+        }
+
+        public ICommand RemoveOnlineCheckChannelCommand
+        {
+            get
+            {
+                if (_removeOnlineCheckChannelCommand == null)
+                {
+                    _removeOnlineCheckChannelCommand = new DelegateCommand(RemoveCheckOnlineChannel);
+                }
+
+                return _removeOnlineCheckChannelCommand;
+            }
+        }
+
+        public ICommand ChooseOnlineCheckDownloadFolderCommand
+        {
+            get
+            {
+                if (_chooseOnlineCheckDownloadFolderCommand == null)
+                {
+                    _chooseOnlineCheckDownloadFolderCommand = new DelegateCommand(ChooseOnlineCheckDownloadFolder);
+                }
+
+                return _chooseOnlineCheckDownloadFolderCommand;
             }
         }
 
@@ -238,6 +294,160 @@ namespace TwitchLeecher.Gui.ViewModels
                 FirePropertyChanged(nameof(DownloadSplitTimeSeconds));
             }
         }
+
+        public int OnlineCheckSplitTimeHours
+        {
+            get
+            {
+                return (int)CurrentPreferences.OnlineCheckSplitTime.TotalHours;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckSplitTime;
+                CurrentPreferences.OnlineCheckSplitTime = new TimeSpan(value, current.Minutes, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeHours));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeSeconds));
+            }
+        }
+
+        public int OnlineCheckSplitTimeMinutes
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckSplitTime.Minutes;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckSplitTime;
+                CurrentPreferences.OnlineCheckSplitTime = new TimeSpan((int)CurrentPreferences.OnlineCheckSplitTime.TotalHours, value, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeHours));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeSeconds));
+            }
+        }
+
+        public int OnlineCheckSplitTimeSeconds
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckSplitTime.Seconds;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckSplitTime;
+                CurrentPreferences.OnlineCheckSplitTime = new TimeSpan((int)CurrentPreferences.OnlineCheckSplitTime.TotalHours, current.Minutes, value);
+
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeHours));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckSplitTimeSeconds));
+            }
+        }
+
+        public int OnlineCheckStartDaytimeHours
+        {
+            get
+            {
+                return (int)CurrentPreferences.OnlineCheckStartDaytime.TotalHours;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckStartDaytime;
+                CurrentPreferences.OnlineCheckStartDaytime = new TimeSpan(value, current.Minutes, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeSeconds));
+            }
+        }
+
+        public int OnlineCheckStartDaytimeMinutes
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckStartDaytime.Minutes;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckStartDaytime;
+                CurrentPreferences.OnlineCheckStartDaytime = new TimeSpan((int)CurrentPreferences.OnlineCheckStartDaytime.TotalHours, value, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeSeconds));
+            }
+        }
+
+        public int OnlineCheckStartDaytimeSeconds
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckStartDaytime.Seconds;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckStartDaytime;
+                CurrentPreferences.OnlineCheckStartDaytime = new TimeSpan((int)CurrentPreferences.OnlineCheckStartDaytime.TotalHours, current.Minutes, value);
+
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckStartDaytimeSeconds));
+            }
+        }
+
+        public int OnlineCheckEndDaytimeHours
+        {
+            get
+            {
+                return (int)CurrentPreferences.OnlineCheckEndDaytime.TotalHours;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckEndDaytime;
+                CurrentPreferences.OnlineCheckEndDaytime = new TimeSpan(value, current.Minutes, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeSeconds));
+            }
+        }
+
+        public int OnlineCheckEndDaytimeMinutes
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckEndDaytime.Minutes;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckEndDaytime;
+                CurrentPreferences.OnlineCheckEndDaytime = new TimeSpan((int)CurrentPreferences.OnlineCheckEndDaytime.TotalHours, value, current.Seconds);
+
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeSeconds));
+            }
+        }
+
+        public int OnlineCheckEndDaytimeSeconds
+        {
+            get
+            {
+                return CurrentPreferences.OnlineCheckEndDaytime.Seconds;
+            }
+            set
+            {
+                TimeSpan current = CurrentPreferences.OnlineCheckEndDaytime;
+                CurrentPreferences.OnlineCheckEndDaytime = new TimeSpan((int)CurrentPreferences.OnlineCheckEndDaytime.TotalHours, current.Minutes, value);
+
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeHours));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeMinutes));
+                FirePropertyChanged(nameof(OnlineCheckEndDaytimeSeconds));
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -349,6 +559,121 @@ namespace TwitchLeecher.Gui.ViewModels
                 if (!cancelled)
                 {
                     CurrentPreferences.DownloadFolder = folder;
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
+        private void UseOnlineCheckChange()
+        {
+            try
+            {
+                lock (_commandLockObject)
+                {
+                    bool currentOnlineCheckUse = CurrentPreferences.OnlineCheckUse;
+
+                    if (!currentOnlineCheckUse)
+                    {
+                        var mesResult = _dialogService.ShowMessageBox(@"This feature use a lot of internet: using it TL can repeatedly check and download streams without any warning or actions from your side.
+Recommend to use it with unlimited internet. Are you sure to use it?", "WARNING!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                        if (mesResult == MessageBoxResult.Yes)
+                        {
+                            CurrentPreferences.OnlineCheckUse = !currentOnlineCheckUse;
+                        }
+                    }
+                    else
+                    {
+                        CurrentPreferences.OnlineCheckUse = !currentOnlineCheckUse;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
+        private void AddCheckOnlineChannel()
+        {
+            try
+            {
+                lock (_commandLockObject)
+                {
+                    string currentChannel = CurrentPreferences.OnlineCheckChannelName;
+
+                    if (!string.IsNullOrWhiteSpace(currentChannel))
+                    {
+                        string existingEntry = CurrentPreferences.OnlineCheckChannels.FirstOrDefault(channel => channel.Equals(currentChannel, StringComparison.OrdinalIgnoreCase));
+
+                        if (!string.IsNullOrWhiteSpace(existingEntry))
+                        {
+                            CurrentPreferences.OnlineCheckChannelName = existingEntry;
+                        }
+                        else
+                        {
+                            CurrentPreferences.OnlineCheckChannels.Add(currentChannel);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
+        private void RemoveCheckOnlineChannel()
+        {
+            try
+            {
+                lock (_commandLockObject)
+                {
+                    string currentChannel = CurrentPreferences.OnlineCheckChannelName;
+
+                    if (!string.IsNullOrWhiteSpace(currentChannel))
+                    {
+                        string existingEntry = CurrentPreferences.OnlineCheckChannels.FirstOrDefault(channel => channel.Equals(currentChannel, StringComparison.OrdinalIgnoreCase));
+
+                        if (!string.IsNullOrWhiteSpace(existingEntry))
+                        {
+                            CurrentPreferences.OnlineCheckChannels.Remove(existingEntry);
+                            CurrentPreferences.OnlineCheckChannelName = CurrentPreferences.OnlineCheckChannels.FirstOrDefault();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
+        private void ChooseOnlineCheckDownloadFolder()
+        {
+            try
+            {
+                lock (_commandLockObject)
+                {
+                    _dialogService.ShowFolderBrowserDialog(CurrentPreferences.OnlineCheckDownloadFolder, ChooseOnlineCheckDownloadFolderCallback);
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
+        private void ChooseOnlineCheckDownloadFolderCallback(bool cancelled, string folder)
+        {
+            try
+            {
+                if (!cancelled)
+                {
+                    CurrentPreferences.OnlineCheckDownloadFolder = folder;
                 }
             }
             catch (Exception ex)
@@ -491,6 +816,36 @@ namespace TwitchLeecher.Gui.ViewModels
                         AddError(nameof(DownloadSplitTimeHours), firstError);
                         AddError(nameof(DownloadSplitTimeMinutes), firstError);
                         AddError(nameof(DownloadSplitTimeSeconds), firstError);
+                    }
+
+                    needErrorList = CurrentPreferences.GetErrors(nameof(CurrentPreferences.OnlineCheckSplitTime)) as List<string>;
+
+                    if (needErrorList != null && needErrorList.Count > 0)
+                    {
+                        string firstError = needErrorList.First();
+                        AddError(nameof(OnlineCheckSplitTimeHours), firstError);
+                        AddError(nameof(OnlineCheckSplitTimeMinutes), firstError);
+                        AddError(nameof(OnlineCheckSplitTimeSeconds), firstError);
+                    }
+
+                    needErrorList = CurrentPreferences.GetErrors(nameof(CurrentPreferences.OnlineCheckStartDaytime)) as List<string>;
+
+                    if (needErrorList != null && needErrorList.Count > 0)
+                    {
+                        string firstError = needErrorList.First();
+                        AddError(nameof(OnlineCheckStartDaytimeHours), firstError);
+                        AddError(nameof(OnlineCheckStartDaytimeMinutes), firstError);
+                        AddError(nameof(OnlineCheckStartDaytimeSeconds), firstError);
+                    }
+
+                    needErrorList = CurrentPreferences.GetErrors(nameof(CurrentPreferences.OnlineCheckEndDaytime)) as List<string>;
+
+                    if (needErrorList != null && needErrorList.Count > 0)
+                    {
+                        string firstError = needErrorList.First();
+                        AddError(nameof(OnlineCheckEndDaytimeHours), firstError);
+                        AddError(nameof(OnlineCheckEndDaytimeMinutes), firstError);
+                        AddError(nameof(OnlineCheckEndDaytimeSeconds), firstError);
                     }
                 }
             }

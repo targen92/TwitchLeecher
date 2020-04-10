@@ -40,6 +40,9 @@
                     <DataTemplate DataType="{x:Type vm:DownloadsViewVM}">
                         <view:DownloadsView />
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:OnlineCheckViewVM}">
+                        <view:OnlineCheckView />
+                    </DataTemplate>
                     <DataTemplate DataType="{x:Type vm:PreferencesViewVM}">
                         <view:PreferencesView />
                     </DataTemplate>
@@ -97,6 +100,15 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0" VerticalAlignment="Center">
+                    <Button FontWeight="Bold" Command="{Binding ShowOnlineCheckCommand}" WindowChrome.IsHitTestVisibleInChrome="True" MinWidth="150" Width="Auto" Margin="0,0,5,0"
+                            Visibility="{Binding ShowOnlineCheckButton, Converter={StaticResource BVConverter}}" >
+                        <StackPanel Orientation="Horizontal">
+                            <fa:ImageAwesome Icon="Download" Margin="6,4,0,2" Width="16" Height="16" RenderTransformOrigin="0.5,0.5" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0,6,0" FontSize="14.667" RenderTransformOrigin="0.5,0.5">
+                                <Run Text="Online " /><Run Text="{Binding OnlineStreamsShortStatus, Mode=OneWay, FallbackValue=' (Off)'}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Button>
                     <Button FontWeight="Bold" Command="{Binding ShowSearchCommand}" WindowChrome.IsHitTestVisibleInChrome="True" Width="150" Margin="0,0,5,0">
                         <StackPanel Orientation="Horizontal">
                             <fa:ImageAwesome Icon="Search" Margin="0,4,0,2" Width="16" Height="16" RenderTransformOrigin="0.5,0.5" />

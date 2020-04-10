@@ -1,12 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using TwitchLeecher.Core.Models;
+using System.Collections.Generic;
 
 namespace TwitchLeecher.Services.Interfaces
 {
     public interface ITwitchService : INotifyPropertyChanged
     {
         #region Properties
+
+        ObservableCollection<TwitchVideo> OnlineStreams { get; }
 
         ObservableCollection<TwitchVideo> Videos { get; }
 
@@ -23,6 +26,8 @@ namespace TwitchLeecher.Services.Interfaces
         string GetChannelIdByName(string channel);
 
         void Search(SearchParameters searchParams);
+
+        void UpdateOnlineChannels();
 
         void Enqueue(DownloadParameters downloadParams);
 

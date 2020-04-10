@@ -21,9 +21,14 @@ namespace TwitchLeecher.Gui.ViewModels
         #region Fields
 
         private bool _showDonationButton;
+        private bool _showOnlineCheckButton;
 
         private int _videosCount;
         private int _downloadsCount;
+
+        private OnlineCheckState _onlineStreamState;
+        private int _onlineStreamsCount;
+        private string _onlineStreamsShortStatus;
 
         private ViewModelBase _mainView;
 
@@ -33,11 +38,13 @@ namespace TwitchLeecher.Gui.ViewModels
         private readonly IDonationService _donationService;
         private readonly INavigationService _navigationService;
         private readonly ISearchService _searchService;
+        private readonly IOnlineCheckService _onlineCheckService;
         private readonly IPreferencesService _preferencesService;
         private readonly IUpdateService _updateService;
 
         private ICommand _showSearchCommand;
         private ICommand _showDownloadsCommand;
+        private ICommand _showOnlineCheckCommand;
         private ICommand _showPreferencesCommand;
         private ICommand _donateCommand;
         private ICommand _showInfoCommand;
@@ -59,6 +66,7 @@ namespace TwitchLeecher.Gui.ViewModels
             IDonationService donationService,
             INavigationService navigationService,
             ISearchService searchService,
+            IOnlineCheckService onlineCheckService,
             IPreferencesService preferencesService,
             IUpdateService updateService)
         {
@@ -72,6 +80,7 @@ namespace TwitchLeecher.Gui.ViewModels
             _donationService = donationService;
             _navigationService = navigationService;
             _searchService = searchService;
+            _onlineCheckService = onlineCheckService;
             _preferencesService = preferencesService;
             _updateService = updateService;
 
@@ -81,8 +90,13 @@ namespace TwitchLeecher.Gui.ViewModels
             _eventAggregator.GetEvent<PreferencesSavedEvent>().Subscribe(PreferencesSaved);
             _eventAggregator.GetEvent<VideosCountChangedEvent>().Subscribe(VideosCountChanged);
             _eventAggregator.GetEvent<DownloadsCountChangedEvent>().Subscribe(DownloadsCountChanged);
+            _eventAggregator.GetEvent<OnlineStreamCountChangedEvent>().Subscribe(OnlineStreamsCountChanged);
+            _eventAggregator.GetEvent<OnlineCheckStatusChangedEvent>().Subscribe(OnlineCheckStatusChanged);
 
             _showDonationButton = _preferencesService.CurrentPreferences.AppShowDonationButton;
+            _showOnlineCheckButton = _preferencesService.CurrentPreferences.OnlineCheckUse;
+
+            _onlineStreamsShortStatus = $"(Off)";
         }
 
         #endregion Constructors
@@ -110,6 +124,30 @@ namespace TwitchLeecher.Gui.ViewModels
             private set
             {
                 SetProperty(ref _downloadsCount, value, nameof(DownloadsCount));
+            }
+        }
+
+        public string OnlineStreamsShortStatus
+        {
+            get
+            {
+                return _onlineStreamsShortStatus;
+            }
+            private set
+            {
+                SetProperty(ref _onlineStreamsShortStatus, value, nameof(OnlineStreamsShortStatus));
+            }
+        }
+
+        public bool ShowOnlineCheckButton
+        {
+            get
+            {
+                return _showOnlineCheckButton;
+            }
+            private set
+            {
+                SetProperty(ref _showOnlineCheckButton, value, nameof(ShowOnlineCheckButton));
             }
         }
 
@@ -163,6 +201,19 @@ namespace TwitchLeecher.Gui.ViewModels
                 }
 
                 return _showDownloadsCommand;
+            }
+        }
+
+        public ICommand ShowOnlineCheckCommand
+        {
+            get
+            {
+                if (_showOnlineCheckCommand == null)
+                {
+                    _showOnlineCheckCommand = new DelegateCommand(ShowOnlineCheck);
+                }
+
+                return _showOnlineCheckCommand;
             }
         }
 
@@ -298,6 +349,21 @@ namespace TwitchLeecher.Gui.ViewModels
             }
         }
 
+        private void ShowOnlineCheck()
+        {
+            try
+            {
+                lock (_commandLockObject)
+                {
+                    _navigationService.ShowOnlineCheck();
+                }
+            }
+            catch (Exception ex)
+            {
+                _dialogService.ShowAndLogException(ex);
+            }
+        }
+
         private void ShowPreferences()
         {
             try
@@ -416,6 +482,7 @@ namespace TwitchLeecher.Gui.ViewModels
             try
             {
                 ShowDonationButton = _preferencesService.CurrentPreferences.AppShowDonationButton;
+                ShowOnlineCheckButton = _preferencesService.CurrentPreferences.OnlineCheckUse;
             }
             catch (Exception ex)
             {
@@ -428,9 +495,48 @@ namespace TwitchLeecher.Gui.ViewModels
             VideosCount = count;
         }
 
+        private void OnlineCheckStatusChanged(OnlineCheckState checkState)
+        {
+            _onlineStreamState = checkState;
+            UpdateOnlineStreamStatus();
+        }
+
+        private void OnlineStreamsCountChanged(int count)
+        {
+            _onlineStreamsCount = count;
+            UpdateOnlineStreamStatus();
+        }
+
         private void DownloadsCountChanged(int count)
         {
             DownloadsCount = count;
+        }
+
+        private void UpdateOnlineStreamStatus()
+        {
+            string curCheckState = "";
+            switch (_onlineStreamState & OnlineCheckState.CheckCurState)
+            {
+                case OnlineCheckState.CheckNow:
+                    curCheckState = "Check"; break;
+                case OnlineCheckState.CheckEnd:
+                    curCheckState = "Check"; break;
+                case OnlineCheckState.Download:
+                    curCheckState = "Download"; break;
+                case OnlineCheckState.Wait:
+                    curCheckState = "Wait"; break;
+                default:
+                    curCheckState = ""; break;
+            }
+
+            if ((_onlineStreamState & OnlineCheckState.CheckOnOff) == OnlineCheckState.CheckOn)
+            {
+                OnlineStreamsShortStatus = $"(On, {curCheckState}{(_onlineStreamsCount > 0 ? ", " + _onlineStreamsCount : "")})";
+            }
+            else
+            {
+                OnlineStreamsShortStatus = $"(Off{(_onlineStreamsCount > 0 ? ", " + _onlineStreamsCount : "")})";
+            }
         }
 
         public void Loaded()
@@ -475,6 +581,23 @@ namespace TwitchLeecher.Gui.ViewModels
                         };
 
                         _searchService.PerformSearch(searchParams);
+                    }
+                }
+
+                if (!updateAvailable && currentPrefs.OnlineCheckStartOnStartup)
+                {
+                    currentPrefs.Validate();
+
+                    if (!currentPrefs.HasErrors)
+                    {
+                        if (!searchOnStartup)
+                        {
+                            _navigationService.ShowOnlineCheck();
+                        }
+
+                        searchOnStartup = true;
+
+                        _onlineCheckService.StartCheckOnlineStreams();
                     }
                 }
 

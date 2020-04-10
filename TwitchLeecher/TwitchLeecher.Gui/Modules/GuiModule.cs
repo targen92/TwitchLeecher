@@ -15,6 +15,7 @@ namespace TwitchLeecher.Gui.Modules
             Bind<INavigationService>().To<NavigationService>().InSingletonScope();
             Bind<INotificationService>().To<NotificationService>().InSingletonScope();
             Bind<ISearchService>().To<SearchService>().InSingletonScope();
+            Bind<IOnlineCheckService>().To<OnlineCheckService>().InSingletonScope();
         }
 
         #endregion Methods

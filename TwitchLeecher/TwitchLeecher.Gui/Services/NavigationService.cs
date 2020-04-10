@@ -89,6 +89,17 @@ namespace TwitchLeecher.Gui.Services
             Navigate(vm);
         }
 
+        public void ShowOnlineCheck()
+        {
+            if (!_persistentViews.TryGetValue(typeof(OnlineCheckViewVM), out ViewModelBase vm))
+            {
+                vm = _kernel.Get<OnlineCheckViewVM>();
+                _persistentViews.Add(typeof(OnlineCheckViewVM), vm);
+            }
+
+            Navigate(vm);
+        }
+
         public void ShowPreferences()
         {
             Navigate(_kernel.Get<PreferencesViewVM>());

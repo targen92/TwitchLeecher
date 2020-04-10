@@ -72,8 +72,10 @@
     <Compile Include="Controls\TlDateTimePicker.cs" />
     <Compile Include="Converters\DownloadStateToVisibilityConverter.cs" />
     <Compile Include="Converters\DownloadStateToColorConverter.cs" />
+    <Compile Include="Converters\BoolToStringConverter.cs" />
     <Compile Include="Converters\InverseBooleanyConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\IsStringInListToBoolConverter.cs" />
     <Compile Include="Converters\SearchTypeToBooleanConverter.cs" />
     <Compile Include="Converters\LoadLimitToBooleanConverter.cs" />
     <Compile Include="Converters\VideoQualityToTextConverter.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Interfaces\IDonationService.cs" />
     <Compile Include="Interfaces\INavigationService.cs" />
     <Compile Include="Interfaces\INavigationState.cs" />
+    <Compile Include="Interfaces\IOnlineCheckService.cs" />
     <Compile Include="Interfaces\ISearchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Converters\VideoTypeToBooleanConverter.cs" />
@@ -92,11 +95,13 @@
     <Compile Include="Services\DonationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\OnlineCheckService.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="ViewModels\LogViewVM.cs" />
     <Compile Include="ViewModels\DownloadViewVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
     <Compile Include="ViewModels\PreferencesViewVM.cs" />
+    <Compile Include="ViewModels\OnlineCheckViewVM.cs" />
     <Compile Include="ViewModels\SearchViewVM.cs" />
     <Compile Include="ViewModels\DownloadsViewVM.cs" />
     <Compile Include="ViewModels\UpdateInfoViewVM.cs" />
@@ -110,6 +115,9 @@
     </Compile>
     <Compile Include="Views\NotificationStrip.xaml.cs">
       <DependentUpon>NotificationStrip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OnlineCheckView.xaml.cs">
+      <DependentUpon>OnlineCheckView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UpdateInfoView.xaml.cs">
       <DependentUpon>UpdateInfoView.xaml</DependentUpon>
@@ -170,9 +178,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\NotificationStrip.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\OnlineCheckView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NotificationStrip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\UpdateInfoView.xaml">
       <Generator>MSBuild:Compile</Generator>

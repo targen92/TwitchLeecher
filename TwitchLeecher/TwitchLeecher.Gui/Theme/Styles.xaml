@@ -46,6 +46,16 @@
         <Setter Property="Width" Value="30" />
     </Style>
 
+    <Style x:Key="TlTextButton" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="Auto" />
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Focusable" Value="False" />
+    </Style>
+
     <Style x:Key="TlDownloadButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Content" Value="Download" />
         <Setter Property="Width" Value="Auto" />

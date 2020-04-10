@@ -18,6 +18,8 @@ namespace TwitchLeecher.Gui.Interfaces
 
         void ShowDownloads();
 
+        void ShowOnlineCheck();
+
         void ShowPreferences();
 
         void ShowInfo();
