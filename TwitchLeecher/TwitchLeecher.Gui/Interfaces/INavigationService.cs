@@ -8,6 +8,8 @@ namespace TwitchLeecher.Gui.Interfaces
 
         void ShowLoading();
 
+        bool IsNowLoading { get; }
+
         void ShowSearch();
 
         void ShowSearchResults();

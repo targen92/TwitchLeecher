@@ -100,7 +100,7 @@ namespace TwitchLeecher.Core.Models
         {
             get
             {
-                if (_downloadState == DownloadState.Downloading || _downloadState == DownloadState.Waiting || _downloadState == DownloadState.Concatenation)
+                if (IsDownloading)
                 {
                     return _status;
                 }
@@ -122,6 +122,31 @@ namespace TwitchLeecher.Core.Models
             private set
             {
                 SetProperty(ref _isIndeterminate, value);
+            }
+        }
+
+        public bool IsDownloading
+        {
+            get
+            {
+                if (_downloadState == DownloadState.Downloading || _downloadState == DownloadState.Waiting || _downloadState == DownloadState.Concatenation)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public bool IsDownloadingOrWill
+        {
+            get
+            {
+                if (_downloadState == DownloadState.Downloading || _downloadState == DownloadState.Waiting
+                    || _downloadState == DownloadState.Concatenation || _downloadState == DownloadState.Queued)
+                {
+                    return true;
+                }
+                return false;
             }
         }
 

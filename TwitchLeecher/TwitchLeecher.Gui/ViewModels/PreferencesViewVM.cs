@@ -483,9 +483,11 @@ namespace TwitchLeecher.Gui.ViewModels
                 {
                     AddError(currentProperty, "Invalid Preferences!");
 
-                    if (CurrentPreferences.GetErrors(nameof(CurrentPreferences.DownloadSplitTime)) is List<string> downloadSplitTimeErrors && downloadSplitTimeErrors.Count > 0)
+                    var needErrorList = CurrentPreferences.GetErrors(nameof(CurrentPreferences.DownloadSplitTime)) as List<string>;
+
+                    if (needErrorList != null && needErrorList.Count > 0)
                     {
-                        string firstError = downloadSplitTimeErrors.First();
+                        string firstError = needErrorList.First();
                         AddError(nameof(DownloadSplitTimeHours), firstError);
                         AddError(nameof(DownloadSplitTimeMinutes), firstError);
                         AddError(nameof(DownloadSplitTimeSeconds), firstError);

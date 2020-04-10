@@ -40,7 +40,8 @@ namespace TwitchLeecher.Services.Services
 
         private const string TEMP_PREFIX = "TL_";
 
-        private const int TIMER_INTERVALL = 2;
+        private readonly TimeSpan TIMER_INTERVALL = TimeSpan.FromMilliseconds(20);
+        private readonly TimeSpan PAUSE_INTERVALL = TimeSpan.FromMilliseconds(2000);
         private const int DOWNLOAD_RETRIES = 3;
         private const int DOWNLOAD_RETRY_TIME = 20;
 
@@ -103,7 +104,7 @@ namespace TwitchLeecher.Services.Services
 
             _changeDownloadLockObject = new object();
 
-            _downloadTimer = new Timer(DownloadTimerCallback, null, 0, TIMER_INTERVALL);
+            _downloadTimer = new Timer(DownloadTimerCallback, null, TimeSpan.Zero, TIMER_INTERVALL);
 
             _eventAggregator.GetEvent<RemoveDownloadEvent>().Subscribe(Remove, ThreadOption.UIThread);
         }
@@ -870,6 +871,7 @@ namespace TwitchLeecher.Services.Services
                                             downloadParams.CropStartTime = splitTimes[index].Item1 ?? new TimeSpan();
                                             downloadParams.CropEnd = splitTimes[index].Item2.HasValue;
                                             downloadParams.CropEndTime = splitTimes[index].Item2 ?? totalTime;
+                                            downloadParams.StreamingNow = true;
 
                                             cropStart = splitTimes[index + 1].Item1.HasValue;
                                             cropStartTime = splitTimes[index + 1].Item1.Value;
@@ -907,6 +909,11 @@ namespace TwitchLeecher.Services.Services
                                                 setStatus("Converting part");
 
                                                 _processingService.ConvertVideo(log, setStatus, setProgress, setIsIndeterminate, tempConcatFile, tempOutputFile, tempCropInfo);
+
+                                                if (File.Exists(tempConcatFile))
+                                                {
+                                                    File.Delete(tempConcatFile);
+                                                }
                                             }
 
                                             cancellationToken.ThrowIfCancellationRequested();
@@ -1290,7 +1297,7 @@ namespace TwitchLeecher.Services.Services
                         break;
                     }
                 }
-                Thread.Sleep(TIMER_INTERVALL * 1000);
+                Thread.Sleep(PAUSE_INTERVALL);
             }
         }
 
@@ -1517,7 +1524,7 @@ namespace TwitchLeecher.Services.Services
         public void Resume()
         {
             _paused = false;
-            _downloadTimer.Change(0, TIMER_INTERVALL);
+            _downloadTimer.Change(TimeSpan.Zero, TIMER_INTERVALL);
         }
 
         public bool CanShutdown()
@@ -1526,7 +1533,7 @@ namespace TwitchLeecher.Services.Services
 
             try
             {
-                return !_downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Waiting || d.DownloadState == DownloadState.Concatenation || d.DownloadState == DownloadState.Queued).Any();
+                return !_downloads.Where(d => d.IsDownloadingOrWill).Any();
             }
             finally
             {
@@ -1564,7 +1571,7 @@ namespace TwitchLeecher.Services.Services
 
         public bool IsFileNameUsed(string fullPath)
         {
-            IEnumerable<TwitchVideoDownload> downloads = _downloads.Where(d => d.DownloadState == DownloadState.Downloading || d.DownloadState == DownloadState.Concatenation || d.DownloadState == DownloadState.Waiting || d.DownloadState == DownloadState.Queued);
+            IEnumerable<TwitchVideoDownload> downloads = _downloads.Where(d => d.IsDownloadingOrWill);
 
             foreach (TwitchVideoDownload download in downloads)
             {

@@ -204,7 +204,7 @@ namespace TwitchLeecher.Gui.ViewModels
                             else
                                 filename = _filenameService.SubstituteWildcards(filename, folder, _twitchService.IsFileNameUsed, video);
 
-                            TwitchVideoQuality shouldQualityOrNull = TryFindQuality(video.Qualities, currentPrefs.DownloadQuality);
+                            TwitchVideoQuality shouldQualityOrNull = TwitchVideoQuality.TryFindQuality(video.Qualities, currentPrefs.DownloadQuality);
 
                             DownloadParameters downloadParams = new DownloadParameters(video, vodAuthInfo, shouldQualityOrNull, folder, filename, currentPrefs.DownloadDisableConversion,
                                 currentPrefs.DownloadSplitUse, currentPrefs.DownloadSplitTime, currentPrefs.SplitOverlapSeconds);
@@ -235,21 +235,6 @@ namespace TwitchLeecher.Gui.ViewModels
             }
         }
         
-        private TwitchVideoQuality TryFindQuality(List<TwitchVideoQuality> qualities, VideoQuality shouldQuality)
-        {
-            if (shouldQuality == VideoQuality.Source)
-                return qualities.First();
-            if (shouldQuality == Core.Enums.VideoQuality.AudioOnly)
-            {
-                return qualities.Find(x => x.QualityString == TwitchVideoQuality.GetQualityString(TwitchVideoQuality.QUALITY_AUDIO));
-            }
-            int fpsShould = shouldQuality.GetFps();
-            int resolutionYShould = shouldQuality.GetResolutionY();
-            
-            //sometimes fps is near value, like 61 or 59 instead 60
-            return qualities.Find(x => x.Fps.HasValue && Math.Abs(x.Fps.Value - fpsShould) < 3 && x.ResolutionY.HasValue && x.ResolutionY.Value == resolutionYShould);
-        }
-
         protected override List<MenuCommand> BuildMenu()
         {
             List<MenuCommand> menuCommands = base.BuildMenu();

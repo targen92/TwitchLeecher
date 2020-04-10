@@ -18,6 +18,7 @@ namespace TwitchLeecher.Gui.Services
         private ITwitchService _twitchService;
         private INavigationService _navigationService;
         private IPreferencesService _preferencesService;
+        private INotificationService _notificationService;
 
         private SearchParameters lastSearchParams;
 
@@ -30,13 +31,15 @@ namespace TwitchLeecher.Gui.Services
             IDialogService dialogService,
             ITwitchService twitchService,
             INavigationService navigationService,
-            IPreferencesService preferencesService)
+            IPreferencesService preferencesService,
+            INotificationService notificationService)
         {
             _eventAggregator = eventAggregator;
             _dialogService = dialogService;
             _twitchService = twitchService;
             _navigationService = navigationService;
             _preferencesService = preferencesService;
+            _notificationService = notificationService;
 
             _eventAggregator.GetEvent<PreferencesSavedEvent>().Subscribe(PreferencesSaved);
         }
@@ -91,7 +94,14 @@ namespace TwitchLeecher.Gui.Services
                     _dialogService.ShowAndLogException(task.Exception);
                 }
 
-                _navigationService.ShowSearchResults();
+                if (_navigationService.IsNowLoading)
+                {
+                    _navigationService.ShowSearchResults();
+                }
+                else
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => _notificationService.ShowNotification("Search result info updated"));
+                }
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             searchTask.Start();
