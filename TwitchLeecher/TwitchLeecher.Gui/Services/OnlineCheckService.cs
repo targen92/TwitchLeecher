@@ -187,6 +187,7 @@ namespace TwitchLeecher.Gui.Services
                     tempParams.CropStartTime = splitPair.Item1 ?? new TimeSpan();
                     tempParams.CropEnd = splitPair.Item2.HasValue;
                     tempParams.CropEndTime = splitPair.Item2 ?? downloadParams.Video.Length;
+                    tempParams.StreamingNow = !tempParams.CropEnd;
                     if (tempParams.StreamingNow)
                     {
                         tempParams.AutoSplit = true;
