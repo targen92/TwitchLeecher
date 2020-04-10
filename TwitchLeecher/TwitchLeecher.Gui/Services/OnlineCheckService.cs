@@ -178,22 +178,22 @@ namespace TwitchLeecher.Gui.Services
                 var splitTimes = TwitchVideo.GetListOfSplitTimes(downloadParams.Video.Length, null, null, downloadParams.AutoSplitTime, downloadParams.AutoSplitOverlap);
                 foreach (var splitPair in splitTimes)
                 {
-
-                    string tempFilename = _filenameService.SubstituteWildcards(baseFilename, baseFolder, _twitchService.IsFileNameUsed, downloadParams.Video, downloadParams.Quality, splitPair.Item1, splitPair.Item2);
+                    string tempFilename = splitPair.Item2.HasValue 
+                        ? _filenameService.SubstituteWildcards(baseFilename, baseFolder, _twitchService.IsFileNameUsed, downloadParams.Video, downloadParams.Quality, splitPair.Item1, splitPair.Item2)
+                        : baseFilename;
                     DownloadParameters tempParams = new DownloadParameters(downloadParams.Video, downloadParams.VodAuthInfo, downloadParams.Quality, baseFolder, tempFilename, downloadParams.DisableConversion, false, new TimeSpan(), 0);
-                    tempParams.StreamingNow = downloadParams.StreamingNow;
+                    tempParams.StreamingNow = false;
                     tempParams.AutoSplit = false;
                     tempParams.CropStart = splitPair.Item1.HasValue;
                     tempParams.CropStartTime = splitPair.Item1 ?? new TimeSpan();
                     tempParams.CropEnd = splitPair.Item2.HasValue;
                     tempParams.CropEndTime = splitPair.Item2 ?? downloadParams.Video.Length;
-                    tempParams.StreamingNow = !tempParams.CropEnd;
-                    if (tempParams.StreamingNow)
+                    if (downloadParams.StreamingNow && !tempParams.CropEnd)
                     {
+                        tempParams.StreamingNow = true;
                         tempParams.AutoSplit = true;
                         tempParams.AutoSplitOverlap = downloadParams.AutoSplitOverlap;
                         tempParams.AutoSplitTime = downloadParams.AutoSplitTime;
-                        tempParams.Filename = baseFilename;
                     }
                     Application.Current.Dispatcher.Invoke(() => _twitchService.Enqueue(tempParams));
                 }

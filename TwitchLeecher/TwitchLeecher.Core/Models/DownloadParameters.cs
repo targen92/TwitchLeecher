@@ -17,6 +17,7 @@ namespace TwitchLeecher.Core.Models
 
         private string _folder;
         private string _filename;
+        private string _basename;
 
         private bool _autoSplit;
         private TimeSpan _autoSplitTime;
@@ -55,6 +56,7 @@ namespace TwitchLeecher.Core.Models
 
             _folder = folder;
             _filename = filename;
+            _basename = filename;
             _disableConversion = disableConversion;
 
             _autoSplitTime = autoSplitTime;
@@ -119,6 +121,14 @@ namespace TwitchLeecher.Core.Models
             {
                 SetProperty(ref _filename, value, nameof(Filename));
                 FirePropertyChanged(nameof(FullPath));
+            }
+        }
+
+        public string Basename
+        {
+            get
+            {
+                return _basename;
             }
         }
 
