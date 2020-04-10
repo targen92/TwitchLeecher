@@ -34,7 +34,7 @@ namespace TwitchLeecher.Core.Models
 
         #region Constructors
 
-        public DownloadParameters(TwitchVideo video, VodAuthInfo vodAuthInfo, TwitchVideoQuality quality, 
+        public DownloadParameters(TwitchVideo video, VodAuthInfo vodAuthInfo, TwitchVideoQuality quality,
             string folder, string filename, bool disableConversion, bool autoSplitUse, TimeSpan autoSplitTime, int autoSplitOverlap)
         {
             if (string.IsNullOrWhiteSpace(folder))
@@ -52,7 +52,7 @@ namespace TwitchLeecher.Core.Models
 
             //null mean that user should manually select quality. Don't worry, validation check will mark this issue
             _quality = quality;// ?? throw new ArgumentNullException(nameof(quality));
-            
+
             _folder = folder;
             _filename = filename;
             _disableConversion = disableConversion;
@@ -159,7 +159,7 @@ namespace TwitchLeecher.Core.Models
         {
             get
             {
-               return _autoSplitTime;
+                return _autoSplitTime;
             }
             set
             {
@@ -210,15 +210,11 @@ namespace TwitchLeecher.Core.Models
         {
             get
             {
-                return _cropEnd && !_streamingNow;
+                return _cropEnd;
             }
             set
             {
                 SetProperty(ref _cropEnd, value, nameof(CropEnd));
-                if (_cropEnd && _streamingNow)
-                {
-                    SetProperty(ref _streamingNow, false, nameof(StreamingNow));
-                }
                 FirePropertyChanged(nameof(CroppedLength));
             }
         }
@@ -280,8 +276,6 @@ namespace TwitchLeecher.Core.Models
             set
             {
                 SetProperty(ref _streamingNow, value, nameof(StreamingNow));
-                FirePropertyChanged(nameof(CropEnd));
-                FirePropertyChanged(nameof(CroppedLength));
             }
         }
 
@@ -358,7 +352,7 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_cropEnd && !_streamingNow)
+                if (_cropEnd)
                 {
                     TimeSpan videoLength = _video.Length;
 
@@ -381,8 +375,11 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_streamingNow)
+                if (_streamingNow && _cropEnd)
                 {
+                    string errorMessage = $"Video can't be end cropped and streaming now in same time!";
+                    AddError(currentProperty, errorMessage);
+                    AddError(nameof(CropEnd), errorMessage);
                 }
             }
 
@@ -398,8 +395,9 @@ namespace TwitchLeecher.Core.Models
                     }
                     else if (!_filename.Contains(FilenameWildcards.UNIQNUMBER) && _autoSplitTime.TotalSeconds < _video.Length.TotalSeconds + Preferences.MIN_SPLIT_LENGTH)
                     {
-                        AddError(currentProperty, $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!");
-                        AddError(nameof(Filename), $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!");
+                        string errorMessage = $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!";
+                        AddError(currentProperty, errorMessage);
+                        AddError(nameof(Filename), errorMessage);
                     }
                 }
             }
@@ -408,7 +406,7 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_autoSplit && (_autoSplitOverlap >= Preferences.MIN_SPLIT_LENGTH / 2 || _autoSplitOverlap <0))
+                if (_autoSplit && (_autoSplitOverlap >= Preferences.MIN_SPLIT_LENGTH / 2 || _autoSplitOverlap < 0))
                 {
                     string errorMessage = $"Overlap seconds has to be less than {Preferences.MIN_SPLIT_LENGTH / 2} seconds!";
                     AddError(currentProperty, errorMessage);

@@ -563,61 +563,61 @@ namespace TwitchLeecher.Services.Services
                                     // Value from config file could not be loaded, use default value
                                 }
                             }
-                        }
 
-                        XElement downloadAndConcatSimultaneouslyEl = downloadEl.Element(DOWNLOAD_CONCAT_SIMULTANEOUSLY_EL);
+                            XElement downloadAndConcatSimultaneouslyEl = downloadEl.Element(DOWNLOAD_CONCAT_SIMULTANEOUSLY_EL);
 
-                        if (downloadAndConcatSimultaneouslyEl != null)
-                        {
-                            try
+                            if (downloadAndConcatSimultaneouslyEl != null)
                             {
-                                preferences.DownloadAndConcatSimultaneously = downloadAndConcatSimultaneouslyEl.GetValueAsBool();
+                                try
+                                {
+                                    preferences.DownloadAndConcatSimultaneously = downloadAndConcatSimultaneouslyEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
                             }
-                            catch
-                            {
-                                // Value from config file could not be loaded, use default value
-                            }
-                        }
 
-                        XElement downloadSplitUseEl = downloadEl.Element(DOWNLOAD_SPLITUSE_EL);
+                            XElement downloadSplitUseEl = downloadEl.Element(DOWNLOAD_SPLITUSE_EL);
 
-                        if (downloadSplitUseEl != null)
-                        {
-                            try
+                            if (downloadSplitUseEl != null)
                             {
-                                preferences.DownloadSplitUse = downloadSplitUseEl.GetValueAsBool();
+                                try
+                                {
+                                    preferences.DownloadSplitUse = downloadSplitUseEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
                             }
-                            catch
-                            {
-                                // Value from config file could not be loaded, use default value
-                            }
-                        }
 
-                        XElement downloadSplitTimeEl = downloadEl.Element(DOWNLOAD_SPLITTIME_EL);
+                            XElement downloadSplitTimeEl = downloadEl.Element(DOWNLOAD_SPLITTIME_EL);
 
-                        if (downloadSplitTimeEl != null)
-                        {
-                            try
+                            if (downloadSplitTimeEl != null)
                             {
-                                preferences.DownloadSplitTime = downloadSplitTimeEl.GetValueAsDateTime() - DateTime.MinValue;
+                                try
+                                {
+                                    preferences.DownloadSplitTime = downloadSplitTimeEl.GetValueAsDateTime() - DateTime.MinValue;
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
                             }
-                            catch
-                            {
-                                // Value from config file could not be loaded, use default value
-                            }
-                        }
 
-                        XElement splitOverlapSecondsEl = downloadEl.Element(DOWNLOAD_SPLITOVERLAP_EL);
+                            XElement splitOverlapSecondsEl = downloadEl.Element(DOWNLOAD_SPLITOVERLAP_EL);
 
-                        if (splitOverlapSecondsEl != null)
-                        {
-                            try
+                            if (splitOverlapSecondsEl != null)
                             {
-                                preferences.SplitOverlapSeconds = splitOverlapSecondsEl.GetValueAsInt();
-                            }
-                            catch
-                            {
-                                // Value from config file could not be loaded, use default value
+                                try
+                                {
+                                    preferences.SplitOverlapSeconds = splitOverlapSecondsEl.GetValueAsInt();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
                             }
                         }
 

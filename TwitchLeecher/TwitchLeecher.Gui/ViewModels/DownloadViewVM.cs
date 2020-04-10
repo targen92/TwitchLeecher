@@ -414,22 +414,6 @@ namespace TwitchLeecher.Gui.ViewModels
                 {
                     Validate();
 
-                    //if (!HasErrors)
-                    //{
-                    //    if (File.Exists(_downloadParams.FullPath))
-                    //    {
-                    //        MessageBoxResult result = _dialogService.ShowMessageBox("The file already exists. Do you want to overwrite it?", "Download", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                    //        if (result != MessageBoxResult.Yes)
-                    //        {
-                    //            return;
-                    //        }
-                    //    }
-
-                    //    _twitchService.Enqueue(_downloadParams);
-                    //    _navigationService.NavigateBack();
-                    //    _notificationService.ShowNotification("Download added");
-                    //}
                     if (!HasErrors)
                     {
                         int downloadAddedCount = 1;

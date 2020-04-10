@@ -61,6 +61,12 @@ namespace TwitchLeecher.Gui.ViewModels
             return new List<MenuCommand>();
         }
 
+        protected void RebuildMenu()
+        {
+            _menuCommands = null;
+            FirePropertyChanged(nameof(MenuCommands));
+        }
+
         #endregion Methods
     }
 }

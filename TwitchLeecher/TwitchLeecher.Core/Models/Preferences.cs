@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using TwitchLeecher.Core.Enums;
 using TwitchLeecher.Shared.Helpers;

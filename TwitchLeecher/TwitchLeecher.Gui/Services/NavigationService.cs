@@ -35,6 +35,12 @@ namespace TwitchLeecher.Gui.Services
 
         #endregion Constructor
 
+        #region Properties
+
+        public bool IsNowLoading { get; private set; }
+
+        #endregion Properties
+
         #region Methods
 
         public void ShowWelcome()
@@ -45,6 +51,7 @@ namespace TwitchLeecher.Gui.Services
         public void ShowLoading()
         {
             Navigate(_kernel.Get<LoadingViewVM>());
+            IsNowLoading = true;
         }
 
         public void ShowSearch()
@@ -136,6 +143,11 @@ namespace TwitchLeecher.Gui.Services
             if (nextView == null || (_currentView != null && _currentView.GetType() == nextView.GetType()))
             {
                 return;
+            }
+
+            if (IsNowLoading)
+            {
+                IsNowLoading = false;
             }
 
             _currentView?.OnBeforeHidden();

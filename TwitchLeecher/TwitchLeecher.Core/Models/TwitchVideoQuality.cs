@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using TwitchLeecher.Core.Enums;
 
 namespace TwitchLeecher.Core.Models
 {
@@ -188,6 +191,31 @@ namespace TwitchLeecher.Core.Models
                 return int.Parse(resolution.Substring(start, resolution.Length - start));
             }
         }
+
+        public static TwitchVideoQuality TryFindQuality(List<TwitchVideoQuality> qualities, VideoQuality shouldQuality)
+        {
+            if (shouldQuality == VideoQuality.Source)
+            {
+                var sourceQuality = qualities.FirstOrDefault(x => x.IsSource);
+
+                if (sourceQuality != null)
+                {
+                    return sourceQuality;
+                }
+
+                return qualities.First();
+            }
+            if (shouldQuality == Core.Enums.VideoQuality.AudioOnly)
+            {
+                return qualities.Find(x => x.QualityString == GetQualityString(QUALITY_AUDIO));
+            }
+            int fpsShould = shouldQuality.GetFps();
+            int resolutionYShould = shouldQuality.GetResolutionY();
+
+            //sometimes fps is near value, like 61 or 59 instead 60
+            return qualities.Find(x => x.Fps.HasValue && Math.Abs(x.Fps.Value - fpsShould) < 3 && x.ResolutionY.HasValue && x.ResolutionY.Value == resolutionYShould);
+        }
+
 
         public int CompareTo(TwitchVideoQuality other)
         {

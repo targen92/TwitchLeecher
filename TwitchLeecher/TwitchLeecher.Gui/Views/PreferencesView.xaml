@@ -294,7 +294,7 @@
                     </fa:ImageAwesome.ToolTip>
                 </fa:ImageAwesome>
 
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Filename Template" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Filename Template" VerticalAlignment="Center" HorizontalAlignment="Right" />
                 <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding CurrentPreferences.DownloadFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                 <fa:ImageAwesome Grid.Row="4" Grid.Column="4" Style="{StaticResource Img_Help}">
                     <fa:ImageAwesome.ToolTip>
@@ -414,8 +414,8 @@
                         </ToolTip>
                     </fa:ImageAwesome.ToolTip>
                 </fa:ImageAwesome>
-                
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="Quality by default" VerticalAlignment="Center" />
+
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Quality by default" VerticalAlignment="Center" HorizontalAlignment="Right" />
                 <ComboBox Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Source={StaticResource dataFromEnum}, Converter={StaticResource videoQualityToTextConverter}}" SelectedItem="{Binding CurrentPreferences.DownloadQuality, Converter={StaticResource videoQualityToTextConverter}}"/>
                 <fa:ImageAwesome Grid.Row="6" Grid.Column="4" Style="{StaticResource Img_Help}">
                     <fa:ImageAwesome.ToolTip>
