@@ -59,6 +59,38 @@ namespace TwitchLeecher.Core.Models
 
         private bool _downloadAndConcatSimultaneously;
 
+        private bool _onlineCheckUse;
+
+        private string _onlineCheckChannelName;
+
+        private RangeObservableCollection<string> _onlineCheckChannels;
+
+        private bool _onlineCheckAutoStartEnd;
+
+        private TimeSpan _onlineCheckStartDaytime;
+
+        private TimeSpan _onlineCheckEndDaytime;
+
+        private bool _onlineCheckStartOnStartup;
+
+        private bool _onlineCheckDownloadOnlyNew;
+
+        private VideoQuality _onlineCheckDownloadQuality;
+
+        private string _onlineCheckDownloadFolder;
+
+        private string _onlineCheckDownloadFileName;
+
+        private bool _onlineCheckUseAutoSplit;
+
+        private TimeSpan _onlineCheckSplitTime;
+
+        private int _onlineCheckSplitOverlapSeconds;
+
+        private bool _onlineCheckAddProgrammToAutoload;//TODO FEATURE
+
+        private int _onlineCheckStopAfterStreams;
+
         private int _miscRetryOnErrorInstantCount;
 
         private int _miscRetryOnErrorPauseCount;
@@ -373,6 +405,199 @@ namespace TwitchLeecher.Core.Models
             }
         }
 
+        public bool OnlineCheckUse
+        {
+            get
+            {
+                return _onlineCheckUse;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckUse, value);
+            }
+        }
+
+        public string OnlineCheckChannelName
+        {
+            get
+            {
+                return _onlineCheckChannelName;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckChannelName, value);
+            }
+        }
+
+        public RangeObservableCollection<string> OnlineCheckChannels
+        {
+            get
+            {
+                if (_onlineCheckChannels == null)
+                {
+                    _onlineCheckChannels = new RangeObservableCollection<string>();
+                }
+
+                return _onlineCheckChannels;
+            }
+        }
+
+        public bool OnlineCheckStartOnStartup
+        {
+            get
+            {
+                return _onlineCheckStartOnStartup;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckStartOnStartup, value);
+            }
+        }
+
+        public bool OnlineCheckDownloadOnlyNew
+        {
+            get
+            {
+                return _onlineCheckDownloadOnlyNew;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckDownloadOnlyNew, value);
+            }
+        }
+
+        public bool OnlineCheckAutoStartEnd
+        {
+            get
+            {
+                return _onlineCheckAutoStartEnd;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckAutoStartEnd, value);
+            }
+        }
+
+        public TimeSpan OnlineCheckStartDaytime
+        {
+            get
+            {
+                return _onlineCheckStartDaytime;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckStartDaytime, value);
+            }
+        }
+
+        public TimeSpan OnlineCheckEndDaytime
+        {
+            get
+            {
+                return _onlineCheckEndDaytime;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckEndDaytime, value);
+            }
+        }
+
+        public VideoQuality OnlineCheckDownloadQuality
+        {
+            get
+            {
+                return _onlineCheckDownloadQuality;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckDownloadQuality, value);
+            }
+        }
+
+        public string OnlineCheckDownloadFolder
+        {
+            get
+            {
+                return _onlineCheckDownloadFolder;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckDownloadFolder, value);
+            }
+        }
+
+        public string OnlineCheckDownloadFileName
+        {
+            get
+            {
+                return _onlineCheckDownloadFileName;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckDownloadFileName, value);
+            }
+        }
+
+        public bool OnlineCheckUseAutoSplit
+        {
+            get
+            {
+                return _onlineCheckUseAutoSplit;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckUseAutoSplit, value);
+            }
+        }
+
+        public TimeSpan OnlineCheckSplitTime
+        {
+            get
+            {
+                return _onlineCheckSplitTime;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckSplitTime, value);
+            }
+        }
+
+        public int OnlineCheckSplitOverlapSeconds
+        {
+            get
+            {
+                return _onlineCheckSplitOverlapSeconds;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckSplitOverlapSeconds, value);
+            }
+        }
+
+        public bool OnlineCheckAddProgrammToAutoload
+        {
+            get
+            {
+                return _onlineCheckAddProgrammToAutoload;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckAddProgrammToAutoload, value);
+            }
+        }
+
+        public int OnlineCheckStopAfterStreams
+        {
+            get
+            {
+                return _onlineCheckStopAfterStreams;
+            }
+            set
+            {
+                SetProperty(ref _onlineCheckStopAfterStreams, value);
+            }
+        }
+
         #endregion Properties
 
         #region Methods
@@ -523,6 +748,126 @@ namespace TwitchLeecher.Core.Models
                     AddError(nameof(DownloadSplitUse), errorMessage);
                 }
             }
+
+            if (_onlineCheckUse)
+            {
+                currentProperty = nameof(OnlineCheckChannels);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (_onlineCheckStartOnStartup &&
+                        (OnlineCheckChannels == null || OnlineCheckChannels.Count == 0 || OnlineCheckChannels.Any(x => string.IsNullOrWhiteSpace(x))))
+                    {
+                        string errorMessage = "If 'Check online on Startup' is enabled, you need to specify at least one channel name!";
+                        AddError(currentProperty, errorMessage);
+                        AddError(nameof(OnlineCheckStartOnStartup), errorMessage);
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckAutoStartEnd);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (_onlineCheckAutoStartEnd)
+                    {
+                        if (_onlineCheckStartDaytime.TotalDays >= 1)
+                        {
+                            string errorMessage = "Start checktime has to be equal or less 23:59:59!";
+                            AddError(currentProperty, errorMessage);
+                            AddError(nameof(OnlineCheckStartDaytime), errorMessage);
+                        }
+                        if (_onlineCheckEndDaytime.TotalDays < 0)
+                        {
+                            string errorMessage = "Start checktime has to be greater than 0!";
+                            AddError(currentProperty, errorMessage);
+                            AddError(nameof(OnlineCheckStartDaytime), errorMessage);
+                        }
+                        if (_onlineCheckEndDaytime.TotalDays >= 1)
+                        {
+                            string errorMessage = "End checktime has to be equal or less 23:59:59!";
+                            AddError(currentProperty, errorMessage);
+                            AddError(nameof(OnlineCheckEndDaytime), errorMessage);
+                        }
+                        if (_onlineCheckEndDaytime.TotalDays < 0)
+                        {
+                            string errorMessage = "End checktime has to be greater than 0!";
+                            AddError(currentProperty, errorMessage);
+                            AddError(nameof(OnlineCheckEndDaytime), errorMessage);
+                        }
+                        if (_onlineCheckEndDaytime.Hours == _onlineCheckStartDaytime.Hours && _onlineCheckEndDaytime.Minutes == _onlineCheckStartDaytime.Minutes && _onlineCheckEndDaytime.Seconds == _onlineCheckStartDaytime.Seconds)
+                        {
+                            string errorMessage = "Start and End checktime has to be different!";
+                            AddError(currentProperty, errorMessage);
+                            AddError(nameof(OnlineCheckStartDaytime), errorMessage);
+                            AddError(nameof(OnlineCheckEndDaytime), errorMessage);
+                        }
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckDownloadFolder);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (string.IsNullOrWhiteSpace(_onlineCheckDownloadFolder))
+                    {
+                        AddError(currentProperty, "Please specify a default download folder for online streams!");
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckDownloadFileName);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (string.IsNullOrWhiteSpace(_onlineCheckDownloadFileName))
+                    {
+                        AddError(currentProperty, "Please specify a default download filename for online streams!");
+                    }
+                    else if (_onlineCheckDownloadFileName.Contains(".") || FileSystem.FilenameContainsInvalidChars(_onlineCheckDownloadFileName))
+                    {
+                        string invalidChars = new string(Path.GetInvalidFileNameChars());
+                        AddError(currentProperty, $"Filename contains invalid characters ({invalidChars}.)!");
+                    }
+                    else if (!_onlineCheckDownloadFileName.Contains(FilenameWildcards.UNIQNUMBER))
+                    {
+                        AddError(currentProperty, $"Download file name for online streams has to contain {FilenameWildcards.UNIQNUMBER} for autonaming!");
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckSplitTime);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (_onlineCheckUseAutoSplit && !_downloadDisableConversion && _onlineCheckSplitTime.TotalSeconds < Preferences.MIN_SPLIT_LENGTH)
+                    {
+                        string errorMessage = $"Split time has to be equal or more {Preferences.MIN_SPLIT_LENGTH} seconds!";
+                        AddError(currentProperty, errorMessage);
+                        AddError(nameof(OnlineCheckUseAutoSplit), errorMessage);
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckSplitOverlapSeconds);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (_onlineCheckUseAutoSplit && !_downloadDisableConversion && (_onlineCheckSplitOverlapSeconds >= Preferences.MIN_SPLIT_LENGTH / 2 || _splitOverlapSeconds < 0))
+                    {
+                        string errorMessage = $"Overlap seconds has to be less than {Preferences.MIN_SPLIT_LENGTH / 2} seconds!";
+                        AddError(currentProperty, errorMessage);
+                        AddError(nameof(OnlineCheckUseAutoSplit), errorMessage);
+                    }
+                }
+
+                currentProperty = nameof(OnlineCheckStopAfterStreams);
+
+                if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
+                {
+                    if (_onlineCheckStopAfterStreams < 0)
+                    {
+                        string errorMessage = "Stop after strams count can't be less than 0!";
+                        AddError(currentProperty, errorMessage);
+                    }
+                }
+            }
         }
 
         public Preferences Clone()
@@ -553,9 +898,25 @@ namespace TwitchLeecher.Core.Models
                 DownloadSplitUse = DownloadSplitUse,
                 DownloadSplitTime = DownloadSplitTime,
                 SplitOverlapSeconds = SplitOverlapSeconds,
+                OnlineCheckAddProgrammToAutoload = OnlineCheckAddProgrammToAutoload,
+                OnlineCheckAutoStartEnd = OnlineCheckAutoStartEnd,
+                OnlineCheckEndDaytime = OnlineCheckEndDaytime,
+                OnlineCheckStartOnStartup = OnlineCheckStartOnStartup,
+                OnlineCheckDownloadOnlyNew = OnlineCheckDownloadOnlyNew,
+                OnlineCheckStartDaytime = OnlineCheckStartDaytime,
+                OnlineCheckDownloadQuality = OnlineCheckDownloadQuality,
+                OnlineCheckDownloadFolder = OnlineCheckDownloadFolder,
+                OnlineCheckDownloadFileName = OnlineCheckDownloadFileName,
+                OnlineCheckUse = OnlineCheckUse,
+                OnlineCheckChannelName = OnlineCheckChannelName,
+                OnlineCheckSplitTime = OnlineCheckSplitTime,
+                OnlineCheckStopAfterStreams = OnlineCheckStopAfterStreams,
+                OnlineCheckUseAutoSplit = OnlineCheckUseAutoSplit,
+                OnlineCheckSplitOverlapSeconds = OnlineCheckSplitOverlapSeconds
             };
 
             clone.SearchFavouriteChannels.AddRange(SearchFavouriteChannels);
+            clone.OnlineCheckChannels.AddRange(OnlineCheckChannels);
 
             return clone;
         }

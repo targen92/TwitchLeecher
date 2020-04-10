@@ -48,6 +48,7 @@ namespace TwitchLeecher.Gui.Services
             Navigate(_kernel.Get<WelcomeViewVM>());
         }
 
+        //public void ShowLoading(string messageOnOtherScreen)
         public void ShowLoading()
         {
             Navigate(_kernel.Get<LoadingViewVM>());
@@ -84,6 +85,17 @@ namespace TwitchLeecher.Gui.Services
             {
                 vm = _kernel.Get<DownloadsViewVM>();
                 _persistentViews.Add(typeof(DownloadsViewVM), vm);
+            }
+
+            Navigate(vm);
+        }
+
+        public void ShowOnlineCheck()
+        {
+            if (!_persistentViews.TryGetValue(typeof(OnlineCheckViewVM), out ViewModelBase vm))
+            {
+                vm = _kernel.Get<OnlineCheckViewVM>();
+                _persistentViews.Add(typeof(OnlineCheckViewVM), vm);
             }
 
             Navigate(vm);

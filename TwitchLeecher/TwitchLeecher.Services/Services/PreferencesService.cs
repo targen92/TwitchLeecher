@@ -56,6 +56,23 @@ namespace TwitchLeecher.Services.Services
         private const string MISC_USEEXTERNALPLAYER_EL = "UseExternalPlayer";
         private const string MISC_EXTERNALPLAYER_EL = "ExternalPlayer";
 
+        private const string ONLINE_EL = "OnlineStreams";
+        private const string ONLINE_CHECK_USE = "UseThisFunction";
+        private const string ONLINE_CHECK_CHANNELS_EL = "CheckChannels";
+        private const string ONLINE_CHECK_AUTO_START_EL = "AutoStart";
+        private const string ONLINE_CHECK_START_DAYTIME_EL = "CheckStartDaytime";
+        private const string ONLINE_CHECK_END_DAYTIME_EL = "CheckEndDaytime";
+        private const string ONLINE_CHECK_START_ON_STARTUP_EL = "StartCheckOnStartup";
+        private const string ONLINE_CHECK_DOWNLOAD_ONLY_NEW_EL = "DownloadOnlyNew";
+        private const string ONLINE_CHECK_DOWNLOAD_FOLDER_EL = "Folder";
+        private const string ONLINE_CHECK_DOWNLOAD_FILENAME_EL = "FileName";
+        private const string ONLINE_CHECK_DOWNLOAD_QUALITY_EL = "DownloadQuality";
+        private const string ONLINE_CHECK_USE_AUTO_SPLIT_EL = "UseAutoSplit";
+        private const string ONLINE_CHECK_SPLIT_TIME_EL = "SplitTime";
+        private const string ONLINE_CHECK_SPLIT_OVERLAP_EL = "SplitOverlapSeconds";
+        private const string ONLINE_CHECK_ADD_PROGRAMM_TO_AUTOLOAD_EL = "AddProgrammToAutoload";
+        private const string ONLINE_CHECK_STOP_AFTER_STREAMS_COUNT_EL = "StopAfterStreamsCount";
+
         #endregion Constants
 
         #region Fields
@@ -147,6 +164,9 @@ namespace TwitchLeecher.Services.Services
 
                 XElement miscEl = new XElement(MISC_EL);
                 preferencesEl.Add(miscEl);
+
+                XElement onlineEl = new XElement(ONLINE_EL);
+                preferencesEl.Add(onlineEl);
 
                 // Application
                 XElement appCheckForUpdatesEl = new XElement(APP_CHECKFORUPDATES_EL);
@@ -267,6 +287,78 @@ namespace TwitchLeecher.Services.Services
                     miscExternalPlayerEl.SetValue(preferences.MiscExternalPlayer);
                     miscEl.Add(miscExternalPlayerEl);
                 }
+
+                // OnlineStreams
+                XElement onlineUse = new XElement(ONLINE_CHECK_USE);
+                onlineUse.SetValue(preferences.OnlineCheckUse);
+                onlineEl.Add(onlineUse);
+
+                XElement onlineAddProgrammToAutoloadEl = new XElement(ONLINE_CHECK_ADD_PROGRAMM_TO_AUTOLOAD_EL);
+                onlineAddProgrammToAutoloadEl.SetValue(preferences.OnlineCheckAddProgrammToAutoload);
+                onlineEl.Add(onlineAddProgrammToAutoloadEl);
+
+                XElement onlineCheckAutoStartEl = new XElement(ONLINE_CHECK_AUTO_START_EL);
+                onlineCheckAutoStartEl.SetValue(preferences.OnlineCheckAutoStartEnd);
+                onlineEl.Add(onlineCheckAutoStartEl);
+
+                RangeObservableCollection<string> onlineCheckChannels = preferences.OnlineCheckChannels;
+
+                if (onlineCheckChannels != null && onlineCheckChannels.Count > 0)
+                {
+                    XElement onlineCheckChannelsEl = new XElement(ONLINE_CHECK_CHANNELS_EL);
+                    onlineCheckChannelsEl.SetValue(string.Join(";", preferences.OnlineCheckChannels));
+                    onlineEl.Add(onlineCheckChannelsEl);
+                }
+
+                XElement onlineCheckEndDaytimeEl = new XElement(ONLINE_CHECK_END_DAYTIME_EL);
+                onlineCheckEndDaytimeEl.SetValue(DateTime.MinValue + preferences.OnlineCheckEndDaytime);
+                onlineEl.Add(onlineCheckEndDaytimeEl);
+
+                XElement onlineCheckOnStartupEl = new XElement(ONLINE_CHECK_START_ON_STARTUP_EL);
+                onlineCheckOnStartupEl.SetValue(preferences.OnlineCheckStartOnStartup);
+                onlineEl.Add(onlineCheckOnStartupEl);
+
+                XElement onlineCheckDownloadOnlyNewEl = new XElement(ONLINE_CHECK_DOWNLOAD_ONLY_NEW_EL);
+                onlineCheckDownloadOnlyNewEl.SetValue(preferences.OnlineCheckDownloadOnlyNew);
+                onlineEl.Add(onlineCheckDownloadOnlyNewEl);
+
+                XElement onlineCheckStartDaytimeEl = new XElement(ONLINE_CHECK_START_DAYTIME_EL);
+                onlineCheckStartDaytimeEl.SetValue(DateTime.MinValue + preferences.OnlineCheckStartDaytime);
+                onlineEl.Add(onlineCheckStartDaytimeEl);
+
+                if (!string.IsNullOrWhiteSpace(preferences.OnlineCheckDownloadFolder))
+                {
+                    XElement onlineCheckDownloadFolderEl = new XElement(ONLINE_CHECK_DOWNLOAD_FOLDER_EL);
+                    onlineCheckDownloadFolderEl.SetValue(preferences.OnlineCheckDownloadFolder);
+                    onlineEl.Add(onlineCheckDownloadFolderEl);
+                }
+
+                if (!string.IsNullOrWhiteSpace(preferences.OnlineCheckDownloadFileName))
+                {
+                    XElement onlineCheckDownloadFileNameEl = new XElement(ONLINE_CHECK_DOWNLOAD_FILENAME_EL);
+                    onlineCheckDownloadFileNameEl.SetValue(preferences.OnlineCheckDownloadFileName);
+                    onlineEl.Add(onlineCheckDownloadFileNameEl);
+                }
+
+                XElement onlineDownloadQualityEl = new XElement(ONLINE_CHECK_DOWNLOAD_QUALITY_EL);
+                onlineDownloadQualityEl.SetValue(preferences.OnlineCheckDownloadQuality);
+                onlineEl.Add(onlineDownloadQualityEl);
+
+                XElement onlineSplitOverlapSecondsEl = new XElement(ONLINE_CHECK_SPLIT_OVERLAP_EL);
+                onlineSplitOverlapSecondsEl.SetValue(preferences.OnlineCheckSplitOverlapSeconds);
+                onlineEl.Add(onlineSplitOverlapSecondsEl);
+
+                XElement onlineSplitTimeEl = new XElement(ONLINE_CHECK_SPLIT_TIME_EL);
+                onlineSplitTimeEl.SetValue(DateTime.MinValue + preferences.OnlineCheckSplitTime);
+                onlineEl.Add(onlineSplitTimeEl);
+
+                XElement OnlineCheckStopAfterStreamsEl = new XElement(ONLINE_CHECK_STOP_AFTER_STREAMS_COUNT_EL);
+                OnlineCheckStopAfterStreamsEl.SetValue(preferences.OnlineCheckStopAfterStreams);
+                onlineEl.Add(OnlineCheckStopAfterStreamsEl);
+
+                XElement onlineUseAutoSplitEl = new XElement(ONLINE_CHECK_USE_AUTO_SPLIT_EL);
+                onlineUseAutoSplitEl.SetValue(preferences.OnlineCheckUseAutoSplit);
+                onlineEl.Add(onlineUseAutoSplitEl);
 
                 string appDataFolder = _folderService.GetAppDataFolder();
 
@@ -681,6 +773,233 @@ namespace TwitchLeecher.Services.Services
                                 }
                             }
                         }
+
+                        XElement onlineEl = preferencesEl.Element(ONLINE_EL);
+
+                        if (onlineEl != null)
+                        {
+                            XElement onlineCheckUseIt = onlineEl.Element(ONLINE_CHECK_USE);
+
+                            if (onlineCheckUseIt != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckUse = onlineCheckUseIt.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineAddProgrammToAutoloadEl = onlineEl.Element(ONLINE_CHECK_ADD_PROGRAMM_TO_AUTOLOAD_EL);
+
+                            if (onlineAddProgrammToAutoloadEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckAddProgrammToAutoload = onlineAddProgrammToAutoloadEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineCheckAutoStartEl = onlineEl.Element(ONLINE_CHECK_AUTO_START_EL);
+
+                            if (onlineCheckAutoStartEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckAutoStartEnd = onlineCheckAutoStartEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineCheckChannelsEl = onlineEl.Element(ONLINE_CHECK_CHANNELS_EL);
+
+                            if (onlineCheckChannelsEl != null)
+                            {
+                                try
+                                {
+                                    string checkChannelsStr = onlineCheckChannelsEl.GetValueAsString();
+
+                                    if (!string.IsNullOrWhiteSpace(checkChannelsStr))
+                                    {
+                                        string[] checkChannelList = checkChannelsStr.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                        if (checkChannelList.Length > 0)
+                                        {
+                                            preferences.OnlineCheckChannels.AddRange(checkChannelList);
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be parsed
+                                }
+                            }
+
+                            XElement onlineCheckEndDaytimeEl = onlineEl.Element(ONLINE_CHECK_END_DAYTIME_EL);
+
+                            if (onlineCheckEndDaytimeEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckEndDaytime = onlineCheckEndDaytimeEl.GetValueAsDateTime() - DateTime.MinValue;
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineCheckOnStartupEl = onlineEl.Element(ONLINE_CHECK_START_ON_STARTUP_EL);
+
+                            if (onlineCheckOnStartupEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckStartOnStartup = onlineCheckOnStartupEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineCheckDownloadOnlyNewEl = onlineEl.Element(ONLINE_CHECK_DOWNLOAD_ONLY_NEW_EL);
+
+                            if (onlineCheckDownloadOnlyNewEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckDownloadOnlyNew = onlineCheckDownloadOnlyNewEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineCheckStartDaytimeEl = onlineEl.Element(ONLINE_CHECK_START_DAYTIME_EL);
+
+                            if (onlineCheckStartDaytimeEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckStartDaytime = onlineCheckStartDaytimeEl.GetValueAsDateTime() - DateTime.MinValue;
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineDownloadFolderEl = onlineEl.Element(ONLINE_CHECK_DOWNLOAD_FOLDER_EL);
+
+                            if (onlineDownloadFolderEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckDownloadFolder = onlineDownloadFolderEl.GetValueAsString();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineDownloadFileNameEl = onlineEl.Element(ONLINE_CHECK_DOWNLOAD_FILENAME_EL);
+
+                            if (onlineDownloadFileNameEl != null)
+                            {
+                                try
+                                {
+                                    string fileName = onlineDownloadFileNameEl.GetValueAsString();
+
+                                    preferences.OnlineCheckDownloadFileName = fileName;
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineDownloadQualityEl = onlineEl.Element(ONLINE_CHECK_DOWNLOAD_QUALITY_EL);
+
+                            if (onlineDownloadQualityEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckDownloadQuality = onlineDownloadQualityEl.GetValueAsEnum<VideoQuality>();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineSplitOverlapSecondsEl = onlineEl.Element(ONLINE_CHECK_SPLIT_OVERLAP_EL);
+
+                            if (onlineSplitOverlapSecondsEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckSplitOverlapSeconds = onlineSplitOverlapSecondsEl.GetValueAsInt();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineSplitTimeEl = onlineEl.Element(ONLINE_CHECK_SPLIT_TIME_EL);
+
+                            if (onlineSplitTimeEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckSplitTime = onlineSplitTimeEl.GetValueAsDateTime() - DateTime.MinValue;
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineStopAfterStreamsEl = onlineEl.Element(ONLINE_CHECK_STOP_AFTER_STREAMS_COUNT_EL);
+
+                            if (onlineStopAfterStreamsEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckStopAfterStreams = onlineStopAfterStreamsEl.GetValueAsInt();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+
+                            XElement onlineUseAutoSplitEl = onlineEl.Element(ONLINE_CHECK_USE_AUTO_SPLIT_EL);
+
+                            if (onlineUseAutoSplitEl != null)
+                            {
+                                try
+                                {
+                                    preferences.OnlineCheckUseAutoSplit = onlineUseAutoSplitEl.GetValueAsBool();
+                                }
+                                catch
+                                {
+                                    // Value from config file could not be loaded, use default value
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -715,6 +1034,21 @@ namespace TwitchLeecher.Services.Services
                 MiscUseExternalPlayer = false,
                 MiscExternalPlayer = null,
                 SplitOverlapSeconds = 10,
+                OnlineCheckUse = false,
+                OnlineCheckChannelName = string.Empty,
+                OnlineCheckStartOnStartup = false,
+                OnlineCheckDownloadOnlyNew = false,
+                OnlineCheckAutoStartEnd = false,
+                OnlineCheckEndDaytime = new TimeSpan(),
+                OnlineCheckStartDaytime = new TimeSpan(),
+                OnlineCheckDownloadFolder = _folderService.GetDownloadFolder(),
+                OnlineCheckDownloadFileName = FilenameWildcards.DATE + "_" + FilenameWildcards.ID + "_" + FilenameWildcards.GAME + "_" + FilenameWildcards.UNIQNUMBER,
+                OnlineCheckDownloadQuality = VideoQuality.Source,
+                OnlineCheckUseAutoSplit = false,
+                OnlineCheckSplitTime = new TimeSpan(),
+                OnlineCheckSplitOverlapSeconds = 10,
+                OnlineCheckStopAfterStreams = 0,
+                OnlineCheckAddProgrammToAutoload = false,
             };
 
             return preferences;

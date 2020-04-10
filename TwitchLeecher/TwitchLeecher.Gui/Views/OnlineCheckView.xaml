@@ -1,0 +1,193 @@
+﻿<UserControl x:Class="TwitchLeecher.Gui.Views.OnlineCheckView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:TwitchLeecher.Gui.Converters"
+             xmlns:ctrl="clr-namespace:TwitchLeecher.Gui.Controls"
+             xmlns:enums="clr-namespace:TwitchLeecher.Core.Enums;assembly=TwitchLeecher.Core"
+             xmlns:prefs="clr-namespace:TwitchLeecher.Core.Models;assembly=TwitchLeecher.Core"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             Style="{DynamicResource thisStyle}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Theme/Constants.xaml" />
+                <ResourceDictionary Source="../Theme/Templates.xaml" />
+                <ResourceDictionary Source="../Theme/Styles.xaml" />
+                <ResourceDictionary Source="../Theme/Images.xaml" />
+                <ResourceDictionary>
+                    <converters:VideoTypeToBooleanConverter x:Key="videoTypeToBooleanConverter" />
+                    <converters:VideoQualityToTextConverter x:Key="videoQualityToTextConverter" />
+                    <converters:LoadLimitToBooleanConverter x:Key="loadLimitToBooleanConverter" />
+                    <converters:IsStringInListToBoolConverter x:Key="isIdAlreadyInDownloadingListToBoolConverter" />
+                    <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+                    <converters:InverseBooleanConverter x:Key="InverseBoolConverter"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <ScrollViewer x:Name="scroller" VerticalScrollBarVisibility="Auto">
+        <Grid VerticalAlignment="Stretch" Margin="20" HorizontalAlignment="Stretch" Grid.IsSharedSizeScope="True" Width="Auto">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="550" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--<Border Grid.Row="0" Margin="0, 0, 0, 10" Padding="0,0,0,5" BorderThickness="0,0,0,1">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource Global.Theme.Color}" />
+                </Border.BorderBrush>
+                <TextBlock FontSize="21.333" FontWeight="Bold" Text="{Binding Path=Status, 
+                                    StringFormat='Status: {0}'}"/>
+            </Border>-->
+
+            <Border Grid.Row="0" Grid.Column="1" Margin="0, 0, 0, 10" Padding="0,0,0,5" BorderThickness="0,0,0,1">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource Global.Theme.Color}" />
+                </Border.BorderBrush>
+                <TextBlock FontSize="21.333" FontWeight="Bold" Text="Online streams"/>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="1" Margin="0, 0, 0, 10" Padding="0,0,0,5" BorderThickness="0,0,0,1">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource Global.Theme.Color}" />
+                </Border.BorderBrush>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition SharedSizeGroup="r2" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition SharedSizeGroup="r1" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition SharedSizeGroup="r1" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition SharedSizeGroup="r1" />
+                        <RowDefinition Height="5" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="g2" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="WARNING!" VerticalAlignment="Center" HorizontalAlignment="Right" Opacity="0.8"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="This mode use A LOT of internet. Please do not use if you has limit internet" VerticalAlignment="Center" HorizontalAlignment="Left" Opacity="0.8"/>
+                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0, 5, 0, 10" BorderThickness="0,1,0,0">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{StaticResource Global.Theme.Color}" Opacity="0.6"  />
+                        </Border.BorderBrush>
+                    </Border>
+                    
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Status:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Path=OnlineStreamsFullStatus}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Channels:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Path=ChannelsForCheck}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Downloading:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding Path=CurrentDownloadOnlineStreamsChannels}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                </Grid>
+            </Border>
+
+            <ItemsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding OnlineStreams, UpdateSourceTrigger=PropertyChanged}" Grid.IsSharedSizeScope="True">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ctrl:TlSpacedUniformGrid Margin="20" Spacing="10" IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="10" BorderThickness="1" CornerRadius="5">
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="{StaticResource Global.Theme.Border.Color}" />
+                            </Border.BorderBrush>
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="{StaticResource Window.Background.Gradient.Top.Color}" Offset="0" />
+                                    <GradientStop Color="{StaticResource Window.Background.Gradient.Bottom.Color}" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Bottom" Height="60" Margin="0,5,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image Grid.Column="0" Source="{Binding GameThumbnail}" ToolTip="{Binding Game}" />
+                                    <Grid Grid.Column="1" Margin="5,0,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Text="{Binding Channel}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontWeight="Bold"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding Title}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+                                        <DockPanel Grid.Row="2">
+                                            <Button DockPanel.Dock="Right" Command="{Binding Path=DataContext.DownloadThisOnlineCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding Id}">
+                                                <Button.Style>
+                                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource TlDownloadButton}">
+                                                        <Setter Property="Content" Value="Start downloading"/>
+                                                        <Setter Property="IsEnabled" Value="True"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Value="True">
+                                                                <DataTrigger.Binding>
+                                                                    <MultiBinding Converter="{StaticResource isIdAlreadyInDownloadingListToBoolConverter}">
+                                                                        <Binding Path="Id"/>
+                                                                        <Binding Path="DataContext.CurrentDownloadsIds" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"/>
+                                                                    </MultiBinding>
+                                                                </DataTrigger.Binding>
+                                                                <Setter Property="Content" Value="Already downloading"/>
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                            <TextBlock Opacity=".75" FontSize="12" Text="{Binding RecordedDate, StringFormat='D'}" VerticalAlignment="Center" />
+                                        </DockPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Cursor="Hand">
+                                    <Grid.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" Command="{Binding Path=DataContext.ViewCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" CommandParameter="{Binding Id}" />
+                                    </Grid.InputBindings>
+                                    <Canvas MinWidth="280" MinHeight="158" x:Name="canvas">
+                                        <Image Source="{Binding Thumbnail}" Width="{Binding ElementName=canvas, Path=ActualWidth}" Height="{Binding ElementName=canvas, Path=ActualHeight}" Stretch="Fill" />
+                                    </Canvas>
+                                    <Border Background="#78000000" HorizontalAlignment="Left" VerticalAlignment="Top" CornerRadius="3" Margin="3,3,0,0" Padding="5,0,5,1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <fa:ImageAwesome Icon="Eye" Width="14" Height="14" VerticalAlignment="Center" Margin="0,1,0,0">
+                                                <fa:ImageAwesome.Foreground>
+                                                    <SolidColorBrush Color="{StaticResource Text.Foreground.Light.Color}" />
+                                                </fa:ImageAwesome.Foreground>
+                                            </fa:ImageAwesome>
+                                            <TextBlock Text="{Binding Views}" FontSize="12" Margin="4,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#78000000" HorizontalAlignment="Right" VerticalAlignment="Top" CornerRadius="3" Margin="0,3,3,0" Padding="5,0,5,1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding LengthStr}" FontSize="12" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#78000000" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="3" Margin="0,0,3,3" Padding="5,1,5,1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding BestQuality}" FontSize="11" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

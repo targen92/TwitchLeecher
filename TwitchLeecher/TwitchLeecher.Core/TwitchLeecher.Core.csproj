@@ -46,6 +46,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Attributes\EnumDisplayNameAttribute.cs" />
+    <Compile Include="Enums\OnlineCheckState.cs" />
     <Compile Include="Enums\DownloadState.cs" />
     <Compile Include="Enums\LoadLimitType.cs" />
     <Compile Include="Enums\SearchType.cs" />
@@ -53,6 +54,8 @@
     <Compile Include="Enums\VideoType.cs" />
     <Compile Include="Events\DownloadsCountChangedEvent.cs" />
     <Compile Include="Events\IsAuthorizedChangedEvent.cs" />
+    <Compile Include="Events\OnlineCheckStatusChangedEvent.cs" />
+    <Compile Include="Events\OnlineStreamCountChangedEvent.cs" />
     <Compile Include="Events\VideosCountChangedEvent.cs" />
     <Compile Include="Events\RemoveDownloadEvent.cs" />
     <Compile Include="Events\PreferencesSavedEvent.cs" />

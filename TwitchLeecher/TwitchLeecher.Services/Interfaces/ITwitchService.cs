@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using TwitchLeecher.Core.Models;
+using System.Collections.Generic;
 
 namespace TwitchLeecher.Services.Interfaces
 {
@@ -9,6 +10,7 @@ namespace TwitchLeecher.Services.Interfaces
         #region Properties
 
         bool IsAuthorized { get; }
+        ObservableCollection<TwitchVideo> OnlineStreams { get; }
 
         ObservableCollection<TwitchVideo> Videos { get; }
 
@@ -29,6 +31,8 @@ namespace TwitchLeecher.Services.Interfaces
         void RevokeAuthorization();
 
         void Search(SearchParameters searchParams);
+
+        void UpdateOnlineChannels();
 
         void Enqueue(DownloadParameters downloadParams);
 

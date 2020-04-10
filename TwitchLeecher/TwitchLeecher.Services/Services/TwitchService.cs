@@ -70,6 +70,7 @@ namespace TwitchLeecher.Services.Services
         private Timer _downloadTimer;
 
         private ObservableCollection<TwitchVideo> _videos;
+        private ObservableCollection<TwitchVideo> _onlineStreams;
         private ObservableCollection<TwitchVideoDownload> _downloads;
 
         private ConcurrentDictionary<string, DownloadTask> _downloadTasks;
@@ -101,6 +102,9 @@ namespace TwitchLeecher.Services.Services
 
             _videos = new ObservableCollection<TwitchVideo>();
             _videos.CollectionChanged += Videos_CollectionChanged;
+
+            _onlineStreams = new ObservableCollection<TwitchVideo>();
+            _onlineStreams.CollectionChanged += OnlineStreams_CollectionChanged;
 
             _downloads = new ObservableCollection<TwitchVideoDownload>();
             _downloads.CollectionChanged += Downloads_CollectionChanged;
@@ -149,6 +153,30 @@ namespace TwitchLeecher.Services.Services
                 }
 
                 FireVideosCountChanged();
+            }
+        }
+
+        public ObservableCollection<TwitchVideo> OnlineStreams
+        {
+            get
+            {
+                return _onlineStreams;
+            }
+            private set
+            {
+                if (_onlineStreams != null)
+                {
+                    _onlineStreams.CollectionChanged -= OnlineStreams_CollectionChanged;
+                }
+
+                SetProperty(ref _onlineStreams, value, nameof(OnlineStreams));
+
+                if (_onlineStreams != null)
+                {
+                    _onlineStreams.CollectionChanged += OnlineStreams_CollectionChanged;
+                }
+
+                FireOnlineStreamsCountChanged();
             }
         }
 
@@ -418,6 +446,23 @@ namespace TwitchLeecher.Services.Services
             }
         }
 
+        public void UpdateOnlineChannels()
+        {
+            var channelList = _preferencesService.CurrentPreferences.OnlineCheckChannels?.ToList();
+
+            if (channelList == null || !channelList.Any())
+            {
+                if (_onlineStreams != null && _onlineStreams.Count > 0)
+                {
+                    OnlineStreams = new ObservableCollection<TwitchVideo>();
+                }
+
+                return;
+            }
+
+            UpdateOnlineChannels(channelList);
+        }
+
         private void SearchChannel(string channel, VideoType videoType, LoadLimitType loadLimit, DateTime loadFrom, DateTime loadTo, int loadLastVods)
         {
             if (string.IsNullOrWhiteSpace(channel))
@@ -596,6 +641,79 @@ namespace TwitchLeecher.Services.Services
             Videos = videos;
         }
 
+        private void UpdateOnlineChannels(IEnumerable<string> channels)
+        {
+            var videoType = VideoType.Broadcast;
+
+            if (channels == null || channels.Count() == 0)
+            {
+                throw new ArgumentNullException(nameof(channels));
+            }
+
+            List<string> channelsId = channels.Select(channel => GetChannelIdByName(channel)).ToList();
+
+            ObservableCollection<TwitchVideo> onlineVideos = new ObservableCollection<TwitchVideo>();
+
+            string broadcastTypeParam = null;
+
+            if (videoType == VideoType.Broadcast)
+            {
+                broadcastTypeParam = "archive";
+            }
+            else if (videoType == VideoType.Highlight)
+            {
+                broadcastTypeParam = "highlight";
+            }
+            else if (videoType == VideoType.Upload)
+            {
+                broadcastTypeParam = "upload";
+            }
+            else
+            {
+                throw new ApplicationException("Unsupported video type '" + videoType.ToString() + "'");
+            }
+
+            List<string> channelsVideosUrl = channelsId.Select(channelId => string.Format(CHANNEL_VIDEOS_URL, channelId)).ToList();
+
+            foreach (var channelVideosUrl in channelsVideosUrl)
+            {
+                using (WebClient webClient = CreatePublicApiWebClient())
+                {
+                    webClient.QueryString.Add("broadcast_type", broadcastTypeParam);
+                    webClient.QueryString.Add("limit", TWITCH_MAX_LOAD_LIMIT.ToString());
+                    webClient.QueryString.Add("offset", 0.ToString());
+
+                    string result = webClient.DownloadString(channelVideosUrl);
+
+                    JObject videosResponseJson = JObject.Parse(result);
+
+                    if (videosResponseJson != null)
+                    {
+                        foreach (JObject videoJson in videosResponseJson.Value<JArray>("videos"))
+                        {
+                            if (videoJson.Value<string>("_id").StartsWith("v"))
+                            {
+                                TwitchVideo video = ParseVideo(videoJson);
+
+                                DateTime recordedDate = video.RecordedDate;
+
+                                var videoLength = video.Length;
+
+                                if (recordedDate + videoLength + TimeSpan.FromMinutes(5 + 1) >= DateTime.Now)
+                                {
+                                    onlineVideos.Add(video);
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            OnlineStreams = onlineVideos;
+        }
+
         private int? GetVideoIdFromUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
@@ -740,7 +858,7 @@ namespace TwitchLeecher.Services.Services
                         TwitchVideoQuality quality = downloadParams.Quality;
 
                         VodAuthInfo vodAuthInfo = downloadParams.VodAuthInfo;
-                        
+
                         string prepareFileName = downloadParams.Filename;
                         downloadParams.Filename = _filenameService.SubstituteWildcards(prepareFileName, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
@@ -874,8 +992,8 @@ namespace TwitchLeecher.Services.Services
                                     {
                                         var statusCode = (exc.Response as HttpWebResponse)?.StatusCode;
                                         if (statusCode != null)
-                                            //|| statusCode == HttpStatusCode.Forbidden
-                                            //|| statusCode == HttpStatusCode.ServiceUnavailable
+                                        //|| statusCode == HttpStatusCode.Forbidden
+                                        //|| statusCode == HttpStatusCode.ServiceUnavailable
                                         {
                                             exceptionInstantCount++;
                                             log($"{Environment.NewLine}Found WebException with status code {statusCode}, will continue conversation{Environment.NewLine}{exc.Message}");
@@ -1667,6 +1785,11 @@ namespace TwitchLeecher.Services.Services
             _eventAggregator.GetEvent<VideosCountChangedEvent>().Publish(_videos != null ? _videos.Count : 0);
         }
 
+        private void FireOnlineStreamsCountChanged()
+        {
+            _eventAggregator.GetEvent<OnlineStreamCountChangedEvent>().Publish(_onlineStreams != null ? _onlineStreams.Count : 0);
+        }
+
         private void FireDownloadsCountChanged()
         {
             _eventAggregator.GetEvent<DownloadsCountChangedEvent>().Publish(_downloads != null ? _downloads.Count : 0);
@@ -1682,6 +1805,7 @@ namespace TwitchLeecher.Services.Services
                 }
 
                 _videos = null;
+                _onlineStreams = null;
                 _downloads = null;
                 _downloadTasks = null;
 
@@ -1701,6 +1825,11 @@ namespace TwitchLeecher.Services.Services
         private void Videos_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             FireVideosCountChanged();
+        }
+
+        private void OnlineStreams_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            FireOnlineStreamsCountChanged();
         }
 
         private void Downloads_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

@@ -18,6 +18,7 @@
                     <converters:VideoTypeToBooleanConverter x:Key="videoTypeToBooleanConverter" />
                     <converters:VideoQualityToTextConverter x:Key="videoQualityToTextConverter" />
                     <converters:LoadLimitToBooleanConverter x:Key="loadLimitToBooleanConverter" />
+                    <converters:BoolToStringConverter x:Key="BooleanToHideShowConverter" FalseValue="(Show this feature)" TrueValue="(Hide this feature)" />
                     <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
                     <converters:InverseBooleanConverter x:Key="InverseBoolConverter"/>
                 </ResourceDictionary>
@@ -28,6 +29,8 @@
     <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Center" Margin="20" HorizontalAlignment="Center" Grid.IsSharedSizeScope="True" Width="550">
             <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
@@ -491,10 +494,442 @@
                 <Border.BorderBrush>
                     <SolidColorBrush Color="{StaticResource Global.Theme.Color}" />
                 </Border.BorderBrush>
+                <Grid Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Online streams check" FontSize="21.333" FontWeight="Bold" />
+                    <Button Grid.Column="2" Style="{StaticResource TlTextButton}" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="11" 
+                            Command="{Binding UseOnlineCheckChangeCommand}"
+                            Content="{Binding CurrentPreferences.OnlineCheckUse, Converter={StaticResource ResourceKey=BooleanToHideShowConverter}}" />
+                    <fa:ImageAwesome Grid.Column="4" Style="{StaticResource Img_Warning}">
+                        <fa:ImageAwesome.ToolTip>
+                            <ToolTip Width="350">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Online streams check" />
+                                    <TextBlock TextAlignment="Justify">
+                                        This feature use a lot of internet: using it TL can repeatedly check and download streams without any warning or actions from your side. Recommend to use it with unlimited internet.
+                                    </TextBlock>
+                                </StackPanel>
+                            </ToolTip>
+                        </fa:ImageAwesome.ToolTip>
+                    </fa:ImageAwesome>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="7" Margin="15,0,0,0" Visibility="{Binding CurrentPreferences.OnlineCheckUse, Converter={StaticResource ResourceKey='BoolToVisConverter'}}">
+                <Grid.Resources>
+                    <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                        ObjectType="{x:Type System:Enum}">
+                        <ObjectDataProvider.MethodParameters>
+                            <x:Type TypeName="enums:VideoQuality"/>
+                        </ObjectDataProvider.MethodParameters>
+                    </ObjectDataProvider>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition/>
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition SharedSizeGroup="r1" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="g2" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Online channels for check" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="0" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding CurrentPreferences.OnlineCheckChannelName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                    <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource TlMiniButton}" Command="{Binding AddOnlineCheckChannelCommand}">
+                        <fa:ImageAwesome Icon="Plus" Width="11" Height="11" RenderTransformOrigin="0.5,0.5" />
+                    </Button>
+                    <Button Grid.Row="0" Grid.Column="4" Style="{StaticResource TlMiniButton}" Command="{Binding RemoveOnlineCheckChannelCommand}" Height="Auto">
+                        <fa:ImageAwesome Icon="Minus" Width="11" Height="11" RenderTransformOrigin="0.5,0.5" />
+                    </Button>
+                </Grid>
+                <fa:ImageAwesome Grid.Row="0" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Online channels for check" />
+                                <TextBlock TextAlignment="Justify">
+                                    Specify a list of channels for the check online streams. Every channel will be checked for new streams and start downloading automatically. Use the +/- buttons in order to add/remove channels to/from the dropdown list.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <ListBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" Margin="0,5,0,0"
+                             ItemsSource="{Binding CurrentPreferences.OnlineCheckChannels}" SelectedValue="{Binding CurrentPreferences.OnlineCheckChannelName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <CheckBox Grid.Row="3" Grid.Column="2" IsChecked="{Binding CurrentPreferences.OnlineCheckStartOnStartup}" Content="Download online on startup" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <fa:ImageAwesome Grid.Row="3" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip  Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Start download online streams on startup" />
+                                <TextBlock TextAlignment="Justify">
+                                    Start check and download online streams on application startup.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding CurrentPreferences.OnlineCheckDownloadOnlyNew}" Content="Download only new streams" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <fa:ImageAwesome Grid.Row="5" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip  Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download only new streams" />
+                                <TextBlock TextAlignment="Justify">
+                                    After online streams check, start downloading only when it is new stream - start less than 10 minute ago
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <CheckBox Grid.Row="7" Grid.Column="2" IsChecked="{Binding CurrentPreferences.OnlineCheckAutoStartEnd}" Content="Start online check by timer" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <fa:ImageAwesome Grid.Row="7" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip  Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Start online check by timer" />
+                                <TextBlock TextAlignment="Justify">
+                                    Start and end check and download online streams by timer everyday, just leave application running.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Check start time" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="9" Grid.Column="2" Grid.IsSharedSizeScope="True" IsEnabled="{Binding CurrentPreferences.OnlineCheckAutoStartEnd}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ctrl:TlIntegerUpDown Grid.Column="0" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckStartDaytimeHours, UpdateSourceTrigger=LostFocus}" Maximum="23" Loop="True" />
+                    <TextBlock Grid.Column="2"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="4" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckStartDaytimeMinutes, UpdateSourceTrigger=LostFocus}" />
+                    <TextBlock Grid.Column="6"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="8" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckStartDaytimeSeconds, UpdateSourceTrigger=LostFocus}" />
+                </Grid>
+                <fa:ImageAwesome Grid.Row="9" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Check start time" />
+                                <TextBlock TextAlignment="Justify">
+                                    Application will start to check online streams from this time every day.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Check end time" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="11" Grid.Column="2" Grid.IsSharedSizeScope="True" IsEnabled="{Binding CurrentPreferences.OnlineCheckAutoStartEnd}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <ctrl:TlIntegerUpDown Grid.Column="0" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckEndDaytimeHours, UpdateSourceTrigger=LostFocus}" Maximum="23" Loop="True" />
+                    <TextBlock Grid.Column="2"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="4" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckEndDaytimeMinutes, UpdateSourceTrigger=LostFocus}" />
+                    <TextBlock Grid.Column="6"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="8" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckEndDaytimeSeconds, UpdateSourceTrigger=LostFocus}" />
+                </Grid>
+                <fa:ImageAwesome Grid.Row="11" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Check end time" />
+                                <TextBlock TextAlignment="Justify">
+                                    Application will end check online streams at this time every day.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="13" Grid.Column="0" Text="Download Folder" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="13" Grid.Column="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding CurrentPreferences.OnlineCheckDownloadFolder, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" />
+                    <Button Style="{StaticResource TlMiniButton}" Command="{Binding ChooseOnlineCheckDownloadFolderCommand}" Grid.Column="2" Grid.Row="0" Content="..." Height="Auto" />
+                </Grid>
+                <fa:ImageAwesome Grid.Row="13" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Download Folder Online" />
+                                <TextBlock TextAlignment="Justify">
+                                    Specify a download folder for online streams. You need write permissions on this folder.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="15" Grid.Column="0" Text="Filename Template" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <TextBox Grid.Row="15" Grid.Column="2" Text="{Binding CurrentPreferences.OnlineCheckDownloadFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
+                <fa:ImageAwesome Grid.Row="15" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="415">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Filename Template for online streams" />
+                                <TextBlock TextAlignment="Justify">
+                                    Specify a default filename template for your online stream downloads.
+                                </TextBlock>
+                                <Grid Margin="0,5,0,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="15" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="15" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Wildcard" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Description" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Example" FontWeight="Bold" />
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{}{channel}" />
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Name of the channel" />
+                                    <TextBlock Grid.Row="2" Grid.Column="4" Text="FakeSmileRevolution" />
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{}{game}" />
+                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="Name of the game" />
+                                    <TextBlock Grid.Row="4" Grid.Column="4" Text="Dark Souls" />
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{}{date}" />
+                                    <TextBlock Grid.Row="6" Grid.Column="2" Text="Recording date (yyyyMMdd)" />
+                                    <TextBlock Grid.Row="6" Grid.Column="4" Text="20160418" />
+
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{}{date-}" />
+                                    <TextBlock Grid.Row="8" Grid.Column="2" Text="Recording date (yyyy-MM-dd)" />
+                                    <TextBlock Grid.Row="8" Grid.Column="4" Text="2016-04-18" />
+
+                                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{}{time}" />
+                                    <TextBlock Grid.Row="10" Grid.Column="2" Text="Recording time" />
+                                    <TextBlock Grid.Row="10" Grid.Column="4" Text="034622PM" />
+
+                                    <TextBlock Grid.Row="12" Grid.Column="0" Text="{}{time-}" />
+                                    <TextBlock Grid.Row="12" Grid.Column="2" Text="Recording time" />
+                                    <TextBlock Grid.Row="12" Grid.Column="4" Text="03-46-22_PM" />
+
+                                    <TextBlock Grid.Row="14" Grid.Column="0" Text="{}{time24}" />
+                                    <TextBlock Grid.Row="14" Grid.Column="2" Text="Recording time (24 hours)" />
+                                    <TextBlock Grid.Row="14" Grid.Column="4" Text="174622" />
+
+                                    <TextBlock Grid.Row="16" Grid.Column="0" Text="{}{time24-}" />
+                                    <TextBlock Grid.Row="16" Grid.Column="2" Text="Recording time (24 hours)" />
+                                    <TextBlock Grid.Row="16" Grid.Column="4" Text="17-46-22" />
+
+                                    <TextBlock Grid.Row="18" Grid.Column="0" Text="{}{id}" />
+                                    <TextBlock Grid.Row="18" Grid.Column="2" Text="Twitch video ID" />
+                                    <TextBlock Grid.Row="18" Grid.Column="4" Text="54869708" />
+
+                                    <TextBlock Grid.Row="20" Grid.Column="0" Text="{}{title}" />
+                                    <TextBlock Grid.Row="20" Grid.Column="2" Text="Video Title" />
+                                    <TextBlock Grid.Row="20" Grid.Column="4" Text="Best Strim Evr!!!" />
+
+                                    <TextBlock Grid.Row="22" Grid.Column="0" Text="{}{res}" />
+                                    <TextBlock Grid.Row="22" Grid.Column="2" Text="Video Resolution" />
+                                    <TextBlock Grid.Row="22" Grid.Column="4" Text="1280x720" />
+
+                                    <TextBlock Grid.Row="24" Grid.Column="0" Text="{}{fps}" />
+                                    <TextBlock Grid.Row="24" Grid.Column="2" Text="Video Framerate" />
+                                    <TextBlock Grid.Row="24" Grid.Column="4" Text="60" />
+
+                                    <TextBlock Grid.Row="26" Grid.Column="0" Text="{}{start}" />
+                                    <TextBlock Grid.Row="26" Grid.Column="2" Text="Crop start time (HHmmss)" />
+                                    <TextBlock Grid.Row="26" Grid.Column="4" Text="012744" />
+
+                                    <TextBlock Grid.Row="28" Grid.Column="0" Text="{}{end}" />
+                                    <TextBlock Grid.Row="28" Grid.Column="2" Text="Crop end time (HHmmss)" />
+                                    <TextBlock Grid.Row="28" Grid.Column="4" Text="025317" />
+
+                                    <TextBlock Grid.Row="30" Grid.Column="0" Text="{}{unumber}" />
+                                    <TextBlock Grid.Row="30" Grid.Column="2" Text="Number to avoid overwrite" />
+                                    <TextBlock Grid.Row="30" Grid.Column="4" Text="1" />
+                                </Grid>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="17" Grid.Column="0" Text="Quality for online" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <ComboBox Grid.Row="17" Grid.Column="2" VerticalAlignment="Center" ItemsSource="{Binding Source={StaticResource dataFromEnum}, Converter={StaticResource videoQualityToTextConverter}}" SelectedItem="{Binding CurrentPreferences.OnlineCheckDownloadQuality, Converter={StaticResource videoQualityToTextConverter}}"/>
+                <fa:ImageAwesome Grid.Row="17" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip  Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Quality for online" />
+                                <TextBlock TextAlignment="Justify">
+                                    Specify quality that will be select for download by default. If video hasn't selected quality, the nearest (but worse) quality will be selected.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="19" Grid.Column="0" Text="Auto Split" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <Grid Grid.Row="19" Grid.Column="2" Grid.IsSharedSizeScope="True" IsEnabled="{Binding CurrentPreferences.DownloadDisableConversion, Converter={StaticResource InverseBoolConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0" IsChecked="{Binding CurrentPreferences.OnlineCheckUseAutoSplit}" Content="Auto" VerticalAlignment="Center"/>
+                    <ctrl:TlIntegerUpDown Grid.Column="2" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckSplitTimeHours, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CurrentPreferences.OnlineCheckUseAutoSplit}" Maximum="99" Loop="False" />
+                    <TextBlock Grid.Column="4"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="6" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckSplitTimeMinutes, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CurrentPreferences.OnlineCheckUseAutoSplit}" />
+                    <TextBlock Grid.Column="8"  Text=":" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="10" Style="{StaticResource TlTimeUpDown}" Value="{Binding OnlineCheckSplitTimeSeconds, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CurrentPreferences.OnlineCheckUseAutoSplit}" />
+                    <TextBlock Grid.Column="12"  Text="Overlap" VerticalAlignment="Center" />
+                    <ctrl:TlIntegerUpDown Grid.Column="14" Style="{StaticResource TlTimeUpDown}" Value="{Binding CurrentPreferences.OnlineCheckSplitOverlapSeconds, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding CurrentPreferences.OnlineCheckUseAutoSplit}" Maximum="99"/>
+                </Grid>
+                <fa:ImageAwesome Grid.Row="19" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Auto Split" />
+                                <TextBlock TextAlignment="Justify" Text="{Binding Path=(prefs:Preferences.MIN_SPLIT_LENGTH), 
+                                    StringFormat='Auto split stream in part with this length. Also add extra seconds to overlap between video parts. Split time has to be at least {0} seconds, parts smaller will be attached to previous part.'}"/>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+
+                <TextBlock Grid.Row="21" Grid.Column="0" Text="Stop after streams" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                <ctrl:TlIntegerUpDown Grid.Row="21" Grid.Column="2" Minimum="0" Maximum="999" Value="{Binding CurrentPreferences.OnlineCheckStopAfterStreams}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="60" />
+                <fa:ImageAwesome Grid.Row="21" Grid.Column="4" Style="{StaticResource Img_Help}">
+                    <fa:ImageAwesome.ToolTip>
+                        <ToolTip  Width="350">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Stop after streams" />
+                                <TextBlock TextAlignment="Justify">
+                                    Stop online stream check after start downloading this count of streams.
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </fa:ImageAwesome.ToolTip>
+                </fa:ImageAwesome>
+            </Grid>
+
+            <Border Grid.Row="8" Margin="0, 20, 0, 10" Padding="0,0,0,5" BorderThickness="0,0,0,1">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource Global.Theme.Color}" />
+                </Border.BorderBrush>
                 <TextBlock  Text="Miscellaneous" FontSize="21.333" FontWeight="Bold" />
             </Border>
 
-            <Grid Grid.Row="7" Margin="15,0,0,0">
+            <Grid Grid.Row="9" Margin="15,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition SharedSizeGroup="r1" />
                     <RowDefinition Height="10" />
