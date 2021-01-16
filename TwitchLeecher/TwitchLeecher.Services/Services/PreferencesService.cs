@@ -1042,7 +1042,7 @@ namespace TwitchLeecher.Services.Services
                 OnlineCheckEndDaytime = new TimeSpan(),
                 OnlineCheckStartDaytime = new TimeSpan(),
                 OnlineCheckDownloadFolder = _folderService.GetDownloadFolder(),
-                OnlineCheckDownloadFileName = FilenameWildcards.DATE + "_" + FilenameWildcards.ID + "_" + FilenameWildcards.GAME + "_" + FilenameWildcards.UNIQNUMBER,
+                OnlineCheckDownloadFileName = FilenameWildcards.DATE + "_" + FilenameWildcards.ID + "_" + FilenameWildcards.GAME + "_" + FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1,
                 OnlineCheckDownloadQuality = VideoQuality.Source,
                 OnlineCheckUseAutoSplit = false,
                 OnlineCheckSplitTime = new TimeSpan(),

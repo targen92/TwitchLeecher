@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using TwitchLeecher.Shared.Extensions;
 using TwitchLeecher.Shared.IO;
 using TwitchLeecher.Shared.Notification;
@@ -403,9 +404,9 @@ namespace TwitchLeecher.Core.Models
                     {
                         AddError(currentProperty, $"The split time has to be at least {Preferences.MIN_SPLIT_LENGTH}s long!");
                     }
-                    else if (!_filename.Contains(FilenameWildcards.UNIQNUMBER) && _autoSplitTime.TotalSeconds < _video.Length.TotalSeconds + Preferences.MIN_SPLIT_LENGTH)
+                    else if (!Regex.IsMatch(_filename, FilenameWildcards.UNIQNUMBER_REGEX) && _autoSplitTime.TotalSeconds < _video.Length.TotalSeconds + Preferences.MIN_SPLIT_LENGTH)
                     {
-                        string errorMessage = $"File name should contains '{FilenameWildcards.UNIQNUMBER}' for auto naming!";
+                        string errorMessage = $"File name should contains '{FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1}' or '{FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE2}' for auto naming!";
                         AddError(currentProperty, errorMessage);
                         AddError(nameof(Filename), errorMessage);
                     }

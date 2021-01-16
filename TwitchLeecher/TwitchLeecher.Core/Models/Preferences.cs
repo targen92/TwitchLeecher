@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.IO;
+using System.Text.RegularExpressions;
 using TwitchLeecher.Core.Enums;
 using TwitchLeecher.Shared.Helpers;
 using TwitchLeecher.Shared.IO;
@@ -717,9 +718,9 @@ namespace TwitchLeecher.Core.Models
 
             if (string.IsNullOrWhiteSpace(propertyName) || propertyName == currentProperty)
             {
-                if (_downloadSplitUse && !_downloadDisableConversion && !_downloadFileName.Contains(FilenameWildcards.UNIQNUMBER))
+                if (_downloadSplitUse && !_downloadDisableConversion && !Regex.IsMatch(_downloadFileName, FilenameWildcards.UNIQNUMBER_REGEX))
                 {
-                    string errorMessage = $"With autosplit option enabled, download file name has to contain {FilenameWildcards.UNIQNUMBER} for autonaming!";
+                    string errorMessage = $"With autosplit option enabled, download file name has to contain {FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1} or {FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE2} for autonaming!";
                     AddError(currentProperty, errorMessage);
                     AddError(nameof(DownloadFileName), errorMessage);
                 }
@@ -827,9 +828,9 @@ namespace TwitchLeecher.Core.Models
                         string invalidChars = new string(Path.GetInvalidFileNameChars());
                         AddError(currentProperty, $"Filename contains invalid characters ({invalidChars}.)!");
                     }
-                    else if (!_onlineCheckDownloadFileName.Contains(FilenameWildcards.UNIQNUMBER))
+                    else if (!Regex.IsMatch(_onlineCheckDownloadFileName, FilenameWildcards.UNIQNUMBER_REGEX))
                     {
-                        AddError(currentProperty, $"Download file name for online streams has to contain {FilenameWildcards.UNIQNUMBER} for autonaming!");
+                        AddError(currentProperty, $"Download file name for online streams has to contain {FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1} or {FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE2} for autonaming!");
                     }
                 }
 

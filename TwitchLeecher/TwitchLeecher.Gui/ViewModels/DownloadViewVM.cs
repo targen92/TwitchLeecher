@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using TwitchLeecher.Core.Models;
@@ -218,13 +219,13 @@ namespace TwitchLeecher.Gui.ViewModels
                         UpdateFilenameFromTemplate();
                     else
                     {
-                        if (_downloadParams.AutoSplit && !_downloadParams.Filename.Contains(FilenameWildcards.UNIQNUMBER))
+                        if (_downloadParams.AutoSplit && !Regex.IsMatch(_downloadParams.Filename, FilenameWildcards.UNIQNUMBER_REGEX))
                         {//Add _{unumber} before extension
-                            _downloadParams.Filename = _downloadParams.Filename.Insert(_downloadParams.Filename.Length - Path.GetExtension(_downloadParams.Filename).Length, $"_{FilenameWildcards.UNIQNUMBER}");
+                            _downloadParams.Filename = _downloadParams.Filename.Insert(_downloadParams.Filename.Length - Path.GetExtension(_downloadParams.Filename).Length, $"_{FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1}");
                         }
                         else if (!_downloadParams.AutoSplit)
                         {
-                            string searchStr = $"_{FilenameWildcards.UNIQNUMBER}{Path.GetExtension(_downloadParams.Filename)}";
+                            string searchStr = $"_{FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1}{Path.GetExtension(_downloadParams.Filename)}";
                             if (_downloadParams.Filename.EndsWith(searchStr))
                             {//remove _{unumber} from end of filename
                                 _downloadParams.Filename = _downloadParams.Filename.Remove(_downloadParams.Filename.Length - searchStr.Length, searchStr.Length - Path.GetExtension(_downloadParams.Filename).Length);
@@ -388,12 +389,13 @@ namespace TwitchLeecher.Gui.ViewModels
             //    AutoSplitUseExtended = false;
 
             _downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
-            if (AutoSplitUseExtended && fileName.Contains(FilenameWildcards.UNIQNUMBER))
+            if (AutoSplitUseExtended && Regex.IsMatch(fileName, FilenameWildcards.UNIQNUMBER_REGEX))
             {
-                string tempUniqNumb = FilenameWildcards.UNIQNUMBER.Insert(FilenameWildcards.UNIQNUMBER.Length - 1, "_temp");
-                fileName = fileName.Replace(FilenameWildcards.UNIQNUMBER, tempUniqNumb);
+                string uniqNumb = Regex.Match(fileName, FilenameWildcards.UNIQNUMBER_REGEX).Value;
+                string tempUniqNumb = uniqNumb.Insert(uniqNumb.Length - 1, "_TEMP");
+                fileName = fileName.Replace(uniqNumb, tempUniqNumb);
                 fileName = _filenameService.SubstituteWildcards(fileName, folder, _twitchService.IsFileNameUsed, _downloadParams.Video, _downloadParams.Quality, cropStartTime, cropEndTime);
-                fileName = fileName.Replace(tempUniqNumb, FilenameWildcards.UNIQNUMBER);
+                fileName = fileName.Replace(tempUniqNumb, uniqNumb);
             }
             else
                 fileName = _filenameService.SubstituteWildcards(fileName, folder, _twitchService.IsFileNameUsed, _downloadParams.Video, _downloadParams.Quality, cropStartTime, cropEndTime);
