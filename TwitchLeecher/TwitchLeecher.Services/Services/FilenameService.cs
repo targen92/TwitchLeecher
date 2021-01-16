@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TwitchLeecher.Core.Models;
 using TwitchLeecher.Services.Interfaces;
 using TwitchLeecher.Shared.Extensions;
@@ -49,12 +50,13 @@ namespace TwitchLeecher.Services.Services
 
             result = SubstituteInvalidChars(result, "_");
 
-            if (result.Contains(FilenameWildcards.UNIQNUMBER))
+            if (Regex.Match(result, FilenameWildcards.UNIQNUMBER_REGEX) is Match match && match.Success)
             {
+                string numeralCount = match.Groups["zeros"].Value+"0";
                 int index = 1;
-                while (File.Exists(Path.Combine(folder, result.Replace(FilenameWildcards.UNIQNUMBER, index.ToString()))) || IsFileNameUsed(Path.Combine(folder, result.Replace(FilenameWildcards.UNIQNUMBER, index.ToString()))))
+                while (File.Exists(Path.Combine(folder, result.Replace(match.Value, index.ToString(numeralCount)))) || IsFileNameUsed(Path.Combine(folder, result.Replace(match.Value, index.ToString(numeralCount)))))
                     index++;
-                result = result.Replace(FilenameWildcards.UNIQNUMBER, index.ToString());
+                result = result.Replace(match.Value, index.ToString(numeralCount));
             }
 
             return result;

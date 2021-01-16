@@ -301,7 +301,7 @@
                 <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding CurrentPreferences.DownloadFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                 <fa:ImageAwesome Grid.Row="4" Grid.Column="4" Style="{StaticResource Img_Help}">
                     <fa:ImageAwesome.ToolTip>
-                        <ToolTip Width="415">
+                        <ToolTip Width="415" >
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Filename Template" />
                                 <TextBlock TextAlignment="Justify">
@@ -309,6 +309,8 @@
                                 </TextBlock>
                                 <Grid Margin="0,5,0,0">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
                                         <RowDefinition SharedSizeGroup="r2" />
                                         <RowDefinition Height="5" />
                                         <RowDefinition SharedSizeGroup="r2" />
@@ -412,6 +414,14 @@
                                     <TextBlock Grid.Row="30" Grid.Column="0" Text="{}{unumber}" />
                                     <TextBlock Grid.Row="30" Grid.Column="2" Text="Number to avoid overwrite" />
                                     <TextBlock Grid.Row="30" Grid.Column="4" Text="1" />
+
+                                    <TextBlock Grid.Row="32" Grid.Column="0" Text="{}{unumber0}" />
+                                    <TextBlock Grid.Row="32" Grid.Column="2" >
+                                        Number to avoid overwrite
+                                        <LineBreak/>
+                                        With leading zero
+                                    </TextBlock>
+                                    <TextBlock Grid.Row="32" Grid.Column="4" Text="01" />
                                 </Grid>
                             </StackPanel>
                         </ToolTip>
@@ -733,7 +743,7 @@
                 <TextBox Grid.Row="15" Grid.Column="2" Text="{Binding CurrentPreferences.OnlineCheckDownloadFileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" />
                 <fa:ImageAwesome Grid.Row="15" Grid.Column="4" Style="{StaticResource Img_Help}">
                     <fa:ImageAwesome.ToolTip>
-                        <ToolTip Width="415">
+                        <ToolTip Width="415" >
                             <StackPanel>
                                 <TextBlock Style="{StaticResource TlToolTipHeadlineText}" Text="Filename Template for online streams" />
                                 <TextBlock TextAlignment="Justify">
@@ -741,6 +751,8 @@
                                 </TextBlock>
                                 <Grid Margin="0,5,0,0">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition SharedSizeGroup="r2" />
+                                        <RowDefinition Height="5" />
                                         <RowDefinition SharedSizeGroup="r2" />
                                         <RowDefinition Height="5" />
                                         <RowDefinition SharedSizeGroup="r2" />
@@ -842,8 +854,16 @@
                                     <TextBlock Grid.Row="28" Grid.Column="4" Text="025317" />
 
                                     <TextBlock Grid.Row="30" Grid.Column="0" Text="{}{unumber}" />
-                                    <TextBlock Grid.Row="30" Grid.Column="2" Text="Number to avoid overwrite" />
+                                    <TextBlock Grid.Row="30" Grid.Column="2" Text="Uniq number to avoid overwrite" />
                                     <TextBlock Grid.Row="30" Grid.Column="4" Text="1" />
+
+                                    <TextBlock Grid.Row="32" Grid.Column="0" Text="{}{unumber0}" />
+                                    <TextBlock Grid.Row="32" Grid.Column="2" >
+                                        Number to avoid overwrite
+                                        <LineBreak/>
+                                        With leading zero
+                                    </TextBlock>
+                                    <TextBlock Grid.Row="32" Grid.Column="4" Text="01" />
                                 </Grid>
                             </StackPanel>
                         </ToolTip>

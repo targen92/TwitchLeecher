@@ -2,8 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using TwitchLeecher.Core.Enums;
 using TwitchLeecher.Core.Events;
@@ -394,10 +394,11 @@ namespace TwitchLeecher.Gui.Services
 
             if (currentPrefs.OnlineCheckUseAutoSplit)
             {//Keep UNIQNUMBER wildcard in name to split file (only in conversation mode)
-                string tempUniqWildcard = FilenameWildcards.UNIQNUMBER.Insert(FilenameWildcards.UNIQNUMBER.Length - 1, "_TEMP");
-                filename = filename.Replace(FilenameWildcards.UNIQNUMBER, tempUniqWildcard);
+                string uniqWildcard = Regex.Match(filename, FilenameWildcards.UNIQNUMBER_REGEX).Value;
+                string tempUniqWildcard = uniqWildcard.Insert(uniqWildcard.Length - 1, "_TEMP");
+                filename = filename.Replace(uniqWildcard, tempUniqWildcard);
                 filename = _filenameService.SubstituteWildcards(filename, folder, _twitchService.IsFileNameUsed, video);
-                filename = filename.Replace(tempUniqWildcard, FilenameWildcards.UNIQNUMBER);
+                filename = filename.Replace(tempUniqWildcard, uniqWildcard);
             }
             else
                 filename = _filenameService.SubstituteWildcards(filename, folder, _twitchService.IsFileNameUsed, video);

@@ -32,6 +32,8 @@
 
         public static string END = "{end}";
 
-        public static string UNIQNUMBER = "{unumber}";
+        public static string UNIQNUMBER_REGEX = @"\{unumber(?<zeros>0{0,})\}";
+        public static string UNIQNUMBER_REGEX_EXAMPLE1 = "{unumber}";
+        public static string UNIQNUMBER_REGEX_EXAMPLE2 = "{unumber0}";
     }
 }
