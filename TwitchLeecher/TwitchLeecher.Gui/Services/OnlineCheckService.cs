@@ -394,7 +394,8 @@ namespace TwitchLeecher.Gui.Services
 
             if (currentPrefs.OnlineCheckUseAutoSplit)
             {//Keep UNIQNUMBER wildcard in name to split file (only in conversation mode)
-                string uniqWildcard = Regex.Match(filename, FilenameWildcards.UNIQNUMBER_REGEX).Value;
+                Match uniqWildcardMatch = Regex.Match(filename, FilenameWildcards.UNIQNUMBER_REGEX);
+                string uniqWildcard = uniqWildcardMatch.Success ? uniqWildcardMatch.Value : FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1;
                 string tempUniqWildcard = uniqWildcard.Insert(uniqWildcard.Length - 1, "_TEMP");
                 filename = filename.Replace(uniqWildcard, tempUniqWildcard);
                 filename = _filenameService.SubstituteWildcards(filename, folder, _twitchService.IsFileNameUsed, video);

@@ -391,7 +391,8 @@ namespace TwitchLeecher.Gui.ViewModels
             _downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
             if (AutoSplitUseExtended && Regex.IsMatch(fileName, FilenameWildcards.UNIQNUMBER_REGEX))
             {
-                string uniqNumb = Regex.Match(fileName, FilenameWildcards.UNIQNUMBER_REGEX).Value;
+                Match uniqNumbMatch = Regex.Match(fileName, FilenameWildcards.UNIQNUMBER_REGEX);
+                string uniqNumb = uniqNumbMatch.Success ? uniqNumbMatch.Value : FilenameWildcards.UNIQNUMBER_REGEX_EXAMPLE1;
                 string tempUniqNumb = uniqNumb.Insert(uniqNumb.Length - 1, "_TEMP");
                 fileName = fileName.Replace(uniqNumb, tempUniqNumb);
                 fileName = _filenameService.SubstituteWildcards(fileName, folder, _twitchService.IsFileNameUsed, _downloadParams.Video, _downloadParams.Quality, cropStartTime, cropEndTime);

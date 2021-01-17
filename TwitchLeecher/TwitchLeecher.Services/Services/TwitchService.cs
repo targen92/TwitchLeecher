@@ -819,6 +819,7 @@ namespace TwitchLeecher.Services.Services
 
                         VodAuthInfo vodAuthInfo = downloadParams.VodAuthInfo;
 
+                        downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
                         downloadParams.Filename = _filenameService.SubstituteWildcards(downloadParams.Basename, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
                         Action<DownloadState> setDownloadState = download.SetDownloadState;
@@ -1008,6 +1009,7 @@ namespace TwitchLeecher.Services.Services
 
                                         for (int index = 0; index < splitTimes.Count - 1; index++)
                                         {
+                                            downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
                                             downloadParams.Filename = _filenameService.SubstituteWildcards(downloadParams.Basename, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
                                             string tempOutputFile = downloadParams.FullPath;
                                             string tempConcatFile = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(downloadParams.FullPath) + ".ts");
@@ -1068,6 +1070,7 @@ namespace TwitchLeecher.Services.Services
                                         downloadParams.CropStartTime = splitTimes[splitTimes.Count - 1].Item1 ?? new TimeSpan();
                                         downloadParams.CropEnd = false;
                                         downloadParams.CropEndTime = totalTime;
+                                        downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
                                         downloadParams.Filename = _filenameService.SubstituteWildcards(downloadParams.Basename, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, totalTime);
 
                                         cancellationToken.ThrowIfCancellationRequested();
@@ -1095,6 +1098,7 @@ namespace TwitchLeecher.Services.Services
 
                             setDownloadState(DownloadState.Concatenation);
 
+                            downloadParams.Filename += "_temp";//for avoid true result from IsFileNameUsed from itself
                             downloadParams.Filename = _filenameService.SubstituteWildcards(downloadParams.Basename, downloadParams.Folder, IsFileNameUsed, downloadParams.Video, downloadParams.Quality, cropStartTime, downloadParams.CropEndTime);
                             string outputFile = downloadParams.FullPath;
                             string concatFile = Path.Combine(tempDir, Path.GetFileNameWithoutExtension(downloadParams.FullPath) + ".ts");
